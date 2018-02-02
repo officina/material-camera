@@ -182,4 +182,9 @@ public class PlaybackVideoFragment extends Fragment
   public void onSubmit(EasyVideoPlayer player, Uri source) {
     useVideo();
   }
+
+  @Override
+  public void onClickVideoFrame(EasyVideoPlayer easyVideoPlayer) {
+
+  }
 }
