@@ -545,6 +545,12 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
   }
 
   @Override
+  public int iconCapture() {
+    return getIntent()
+            .getIntExtra(CameraIntentKey.ICON_STILL_SHOT, R.drawable.nowr_action_capture);
+  }
+
+  @Override
   public boolean useStillshot() {
     return getIntent().getBooleanExtra(CameraIntentKey.STILL_SHOT, false);
   }

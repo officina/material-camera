@@ -862,7 +862,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     super.startRecordingVideo();
     try {
       // UI
-      setImageRes(mButtonVideo, mInterface.iconStop());
+      //setImageRes(mButtonVideo, mInterface.iconStop());
       if (!CameraUtil.isChromium()) mButtonFacing.setVisibility(View.GONE);
 
       // Only start counter if count down wasn't already started
@@ -874,15 +874,15 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
       // Start recording
       mMediaRecorder.start();
 
-      mButtonVideo.setEnabled(false);
-      mButtonVideo.postDelayed(
+      //mButtonVideo.setEnabled(false);
+      /*mButtonVideo.postDelayed(
           new Runnable() {
             @Override
             public void run() {
               mButtonVideo.setEnabled(true);
             }
           },
-          200);
+          200);*/
 
       return true;
     } catch (Throwable t) {
@@ -910,7 +910,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     if (!mInterface.didRecord()) mOutputUri = null;
 
     releaseRecorder();
-    setImageRes(mButtonVideo, mInterface.iconRecord());
+    //setImageRes(mButtonVideo, mInterface.iconRecord());
     if (!CameraUtil.isChromium()) mButtonFacing.setVisibility(View.VISIBLE);
     if (mInterface.getRecordingStart() > -1 && getActivity() != null)
       mInterface.onShowPreview(mOutputUri, reachedZero);

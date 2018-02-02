@@ -9,6 +9,7 @@ import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_M
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
@@ -20,11 +21,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.UiThread;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -37,12 +40,13 @@ import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /** @author Aidan Follestad (afollestad) */
 abstract class BaseCameraFragment extends Fragment
-    implements CameraUriInterface, View.OnClickListener {
+    implements CameraUriInterface, View.OnClickListener, View.OnTouchListener {
 
-  protected ImageButton mButtonVideo;
   protected ImageButton mButtonStillshot;
   protected ImageButton mButtonFacing;
   protected ImageButton mButtonFlash;
@@ -101,7 +105,7 @@ abstract class BaseCameraFragment extends Fragment
     }
     Drawable d = AppCompatResources.getDrawable(iv.getContext(), res);
     d = DrawableCompat.wrap(d.mutate());
-    DrawableCompat.setTint(d, mIconTextColor);
+    //DrawableCompat.setTint(d, mIconTextColor);
     iv.setImageDrawable(d);
   }
 
@@ -111,7 +115,6 @@ abstract class BaseCameraFragment extends Fragment
     super.onViewCreated(view, savedInstanceState);
 
     mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
-    mButtonVideo = (ImageButton) view.findViewById(R.id.video);
     mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
     mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
     mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
@@ -128,8 +131,8 @@ abstract class BaseCameraFragment extends Fragment
     mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
     setupFlashMode();
 
-    mButtonVideo.setOnClickListener(this);
-    mButtonStillshot.setOnClickListener(this);
+    //mButtonStillshot.setOnClickListener(this);
+    mButtonStillshot.setOnTouchListener(this);
     mButtonFacing.setOnClickListener(this);
     mButtonFlash.setOnClickListener(this);
 
@@ -144,21 +147,21 @@ abstract class BaseCameraFragment extends Fragment
     mRecordDuration.setTextColor(mIconTextColor);
 
     if (mMediaRecorder != null && mIsRecording) {
-      setImageRes(mButtonVideo, mInterface.iconStop());
+      //setImageRes(mButtonVideo, mInterface.iconStop());
     } else {
-      setImageRes(mButtonVideo, mInterface.iconRecord());
+      //setImageRes(mButtonVideo, mInterface.iconRecord());
       mInterface.setDidRecord(false);
     }
 
     if (savedInstanceState != null) mOutputUri = savedInstanceState.getString("output_uri");
 
-    if (mInterface.useStillshot()) {
-      mButtonVideo.setVisibility(View.GONE);
-      mRecordDuration.setVisibility(View.GONE);
-      mButtonStillshot.setVisibility(View.VISIBLE);
-      setImageRes(mButtonStillshot, mInterface.iconStillshot());
+    mRecordDuration.setVisibility(View.GONE);
+    mButtonStillshot.setVisibility(View.VISIBLE);
+    setImageRes(mButtonStillshot, mInterface.iconCapture());
+    if (mInterface.useStillshot()){
       mButtonFlash.setVisibility(View.VISIBLE);
     }
+
 
     if (mInterface.autoRecordDelay() < 1000) {
       mDelayStartCountdown.setVisibility(View.GONE);
@@ -198,7 +201,7 @@ abstract class BaseCameraFragment extends Fragment
     }
 
     mDelayHandler = new Handler();
-    mButtonVideo.setEnabled(false);
+    //mButtonVideo.setEnabled(false);
 
     if (mInterface.autoRecordDelay() < 1000) {
       // Less than a second delay
@@ -208,7 +211,7 @@ abstract class BaseCameraFragment extends Fragment
             @Override
             public void run() {
               if (!isAdded() || getActivity() == null || mIsRecording) return;
-              mButtonVideo.setEnabled(true);
+              //mButtonVideo.setEnabled(true);
               mIsRecording = startRecordingVideo();
               mDelayHandler = null;
             }
@@ -230,7 +233,7 @@ abstract class BaseCameraFragment extends Fragment
 
             if (mDelayCurrentSecond == 0) {
               mDelayStartCountdown.setVisibility(View.GONE);
-              mButtonVideo.setEnabled(true);
+              //mButtonVideo.setEnabled(true);
               mIsRecording = startRecordingVideo();
               mDelayHandler = null;
               return;
@@ -245,7 +248,7 @@ abstract class BaseCameraFragment extends Fragment
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    mButtonVideo = null;
+    //mButtonVideo = null;
     mButtonStillshot = null;
     mButtonFacing = null;
     mButtonFlash = null;
@@ -267,11 +270,10 @@ abstract class BaseCameraFragment extends Fragment
     }
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  public final void onAttach(Activity activity) {
-    super.onAttach(activity);
-    mInterface = (BaseCaptureInterface) activity;
+  public final void onAttach(Context context) {
+    super.onAttach(context);
+    mInterface = (BaseCaptureInterface) context;
   }
 
   @NonNull
@@ -361,12 +363,8 @@ abstract class BaseCameraFragment extends Fragment
       if (mInterface.getRecordingStart() == -1)
         mInterface.setRecordingStart(System.currentTimeMillis());
       startCounter();
+      mInterface.setDidRecord(true);
     }
-
-    final int orientation = Degrees.getActivityOrientation(getActivity());
-    //noinspection ResourceType
-    getActivity().setRequestedOrientation(orientation);
-    mInterface.setDidRecord(true);
     return true;
   }
 
@@ -406,37 +404,50 @@ abstract class BaseCameraFragment extends Fragment
       closeCamera();
       openCamera();
       setupFlashMode();
-    } else if (id == R.id.video) {
-      if (mIsRecording) {
-        stopRecordingVideo(false);
-        mIsRecording = false;
-      } else {
-        if (getArguments().getBoolean(CameraIntentKey.SHOW_PORTRAIT_WARNING, true)
-            && Degrees.isPortrait(getActivity())) {
-          new MaterialDialog.Builder(getActivity())
-              .title(R.string.mcam_portrait)
-              .content(R.string.mcam_portrait_warning)
-              .positiveText(R.string.mcam_yes)
-              .negativeText(android.R.string.cancel)
-              .onPositive(
-                  new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(
-                        @NonNull MaterialDialog materialDialog,
-                        @NonNull DialogAction dialogAction) {
-                      mIsRecording = startRecordingVideo();
-                    }
-                  })
-              .show();
-        } else {
-          mIsRecording = startRecordingVideo();
-        }
-      }
     } else if (id == R.id.stillshot) {
-      takeStillshot();
+
     } else if (id == R.id.flash) {
       invalidateFlash(true);
     }
+  }
+
+  @Override
+  public boolean onTouch(View v, MotionEvent event) {
+    int id = v.getId();
+    if (id == R.id.stillshot) {
+      Timer timer = new Timer("VideoRecording");
+      switch (event.getAction()){
+        case MotionEvent.ACTION_DOWN:
+          mRecordDuration.setVisibility(View.VISIBLE);
+          final Activity activity = getActivity();
+          timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+              activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                  mIsRecording = startRecordingVideo();
+                }
+              });
+            }
+          }, 5000);
+          return true;
+
+        case MotionEvent.ACTION_UP:
+          timer.cancel();
+          if (mIsRecording) {
+            mRecordDuration.setVisibility(View.GONE);
+            stopRecordingVideo(false);
+            mIsRecording = false;
+          }else{
+            takeStillshot();
+          }
+          return true;
+        default:
+          break;
+      }
+    }
+    return false;
   }
 
   private void invalidateFlash(boolean toggle) {

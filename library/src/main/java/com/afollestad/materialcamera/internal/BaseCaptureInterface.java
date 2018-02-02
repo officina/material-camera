@@ -107,6 +107,9 @@ public interface BaseCaptureInterface {
   @DrawableRes
   int iconStillshot();
 
+  @DrawableRes
+  int iconCapture();
+
   /** @return true if we only want to take photographs instead of video capture */
   boolean useStillshot();
 

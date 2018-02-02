@@ -422,7 +422,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     if (prepareMediaRecorder()) {
       try {
         // UI
-        setImageRes(mButtonVideo, mInterface.iconStop());
+        //setImageRes(mButtonVideo, mInterface.iconStop());
         if (!CameraUtil.isChromium()) mButtonFacing.setVisibility(View.GONE);
 
         // Only start counter if count down wasn't already started
@@ -434,7 +434,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         // Start recording
         mMediaRecorder.start();
 
-        mButtonVideo.setEnabled(false);
+        /*mButtonVideo.setEnabled(false);
         mButtonVideo.postDelayed(
             new Runnable() {
               @Override
@@ -442,7 +442,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 mButtonVideo.setEnabled(true);
               }
             },
-            200);
+            200);*/
 
         return true;
       } catch (Throwable t) {
@@ -489,7 +489,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
     if (!mInterface.didRecord()) mOutputUri = null;
 
-    setImageRes(mButtonVideo, mInterface.iconRecord());
+    //setImageRes(mButtonVideo, mInterface.iconRecord());
     if (!CameraUtil.isChromium()) mButtonFacing.setVisibility(View.VISIBLE);
     if (mInterface.getRecordingStart() > -1 && getActivity() != null)
       mInterface.onShowPreview(mOutputUri, reachedZero);

@@ -323,7 +323,7 @@ public class MaterialCamera {
             .putExtra(CameraIntentKey.AUTO_SUBMIT, mAutoSubmit)
             .putExtra(CameraIntentKey.SAVE_DIR, mSaveDir)
             .putExtra(CameraIntentKey.PRIMARY_COLOR, mPrimaryColor)
-            .putExtra(CameraIntentKey.SHOW_PORTRAIT_WARNING, mShowPortraitWarning)
+            .putExtra(CameraIntentKey.SHOW_PORTRAIT_WARNING, false)
             .putExtra(CameraIntentKey.ALLOW_CHANGE_CAMERA, mAllowChangeCamera)
             .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
             .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
