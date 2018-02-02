@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:' + versions.supportLib
-    compile 'com.afollestad:easyvideoplayer:' + versions.easyVideoPlayer
+    compile 'com.github.officina:easy-video-player:0.3.2'
     compile 'com.afollestad.material-dialogs:core:' + versions.materialDialogs
 }
 
