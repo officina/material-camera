@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootFrame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:foreground="?selectableItemBackground">
+<RelativeLayout android:id="@+id/rootFrame"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:foreground="?selectableItemBackground">
 
     <include
         layout="@layout/mcam_include_camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/controlsFrame" />
+        android:layout_above="@+id/controlsFrame"/>
 
     <RelativeLayout
         android:id="@+id/controlsFrame"
@@ -36,7 +36,7 @@
             android:padding="@dimen/mcam_content_inset_less"
             android:scaleType="fitXY"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/mcam_camera_front" />
+            tools:src="@drawable/mcam_camera_front"/>
 
         <ImageButton
             android:id="@+id/flash"
@@ -50,7 +50,7 @@
             android:scaleType="fitXY"
             android:visibility="gone"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/mcam_action_flash" />
+            tools:src="@drawable/mcam_action_flash"/>
 
         <ImageButton
             android:id="@+id/stillshot"
@@ -63,7 +63,7 @@
             android:scaleType="center"
             android:visibility="visible"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/nowr_action_capture" />
+            tools:src="@drawable/mcam_action_capture"/>
 
         <TextView
             android:id="@+id/recordDuration"
@@ -74,8 +74,8 @@
             android:layout_centerVertical="true"
             android:fontFamily="sans-serif-medium"
             android:text="@string/mcam_defaultDuration"
-            android:textColor="#fff"
-            android:textSize="@dimen/mcam_regular_content_fontsize" />
+            android:textColor="#A0020E"
+            android:textSize="@dimen/mcam_regular_content_fontsize"/>
 
     </RelativeLayout>
 
@@ -90,6 +90,6 @@
         android:text="5"
         android:textColor="#fff"
         android:textSize="@dimen/mcam_regular_header_fontsize"
-        tools:ignore="HardcodedText,UnusedAttribute" />
+        tools:ignore="HardcodedText,UnusedAttribute"/>
 
 </RelativeLayout>

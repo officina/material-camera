@@ -9,12 +9,12 @@
     <!-- Oval 2 -->
     <path
         android:name="oval2"
-        android:fillColor="#929292"
+        android:fillColor="#33929292"
         android:pathData="M 22,12 C 22,17.52 17.52,22 12,22 C 6.48,22 2,17.52 2,12 C 2,6.48 6.48,2 12,2 C 17.52,2 22,6.48 22,12 Z"/>
 
     <!-- Oval -->
     <path
         android:name="oval"
-        android:fillColor="#FFFFFF"
+        android:fillColor="#33FFFFFF"
         android:pathData="M 19,12 C 19,15.87 15.87,19 12,19 C 8.13,19 5,15.87 5,12 C 5,8.13 8.13,5 12,5 C 15.87,5 19,8.13 19,12 Z"/>
 </vector>
