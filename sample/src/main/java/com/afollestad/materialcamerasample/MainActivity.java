@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     setContentView(R.layout.activity_main);
     findViewById(R.id.launchCamera).setOnClickListener(this);
-    findViewById(R.id.launchCameraStillshot).setOnClickListener(this);
     findViewById(R.id.launchFromFragment).setOnClickListener(this);
     findViewById(R.id.launchFromFragmentSupport).setOnClickListener(this);
 
@@ -72,11 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             .allowRetry(true)
             .autoSubmit(false)
             .labelConfirm(R.string.mcam_use_video);
-
-    if (view.getId() == R.id.launchCameraStillshot)
-      materialCamera
-          .stillShot() // launches the Camera in stillshot mode
-          .labelConfirm(R.string.mcam_use_stillshot);
     materialCamera.start(CAMERA_RQ);
   }
 

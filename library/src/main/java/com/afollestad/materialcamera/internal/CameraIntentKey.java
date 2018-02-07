@@ -40,7 +40,6 @@ public class CameraIntentKey {
 
   public static final String LABEL_RETRY = "label_retry";
   public static final String LABEL_CONFIRM = "label_confirm";
-  public static final String STILL_SHOT = "still_shot";
 
   public static final String AUTO_RECORD = "auto_record";
 }

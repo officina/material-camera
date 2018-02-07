@@ -158,9 +158,7 @@ abstract class BaseCameraFragment extends Fragment
     mRecordDuration.setVisibility(View.GONE);
     mButtonStillshot.setVisibility(View.VISIBLE);
     setImageRes(mButtonStillshot, mInterface.iconCapture());
-    if (mInterface.useStillshot()){
-      mButtonFlash.setVisibility(View.VISIBLE);
-    }
+    mButtonFlash.setVisibility(View.VISIBLE);
 
 
     if (mInterface.autoRecordDelay() < 1000) {
@@ -183,7 +181,6 @@ abstract class BaseCameraFragment extends Fragment
   protected void onCameraOpened() {
     if (mDidAutoRecord
         || mInterface == null
-        || mInterface.useStillshot()
         || mInterface.autoRecordDelay() < 0
         || getActivity() == null) {
       mDelayStartCountdown.setVisibility(View.GONE);
@@ -268,6 +265,13 @@ abstract class BaseCameraFragment extends Fragment
             String.format("-%s", CameraUtil.getDurationString(mInterface.getLengthLimit())));
       }
     }
+  }
+
+  @SuppressWarnings("deprecation")
+  @Override
+  public final void onAttach(Activity activity) {
+    super.onAttach(activity);
+    mInterface = (BaseCaptureInterface) activity;
   }
 
   @Override
@@ -363,8 +367,8 @@ abstract class BaseCameraFragment extends Fragment
       if (mInterface.getRecordingStart() == -1)
         mInterface.setRecordingStart(System.currentTimeMillis());
       startCounter();
-      mInterface.setDidRecord(true);
     }
+    mInterface.setDidRecord(true);
     return true;
   }
 
@@ -404,10 +408,44 @@ abstract class BaseCameraFragment extends Fragment
       closeCamera();
       openCamera();
       setupFlashMode();
-    } else if (id == R.id.stillshot) {
-
     } else if (id == R.id.flash) {
       invalidateFlash(true);
+    }
+  }
+
+  private Timer mTimer;
+  private TimerTask mTimerTask;
+
+  private void startTimer(){
+    stopTimer();
+
+    mTimer = new Timer("VideoRecording");
+    mTimerTask = new TimerTask() {
+      @Override
+      public void run() {
+        getActivity().runOnUiThread(new Runnable() {
+          @Override
+          public void run() {
+            mRecordDuration.setVisibility(View.VISIBLE);
+            mIsRecording = startRecordingVideo();
+          }
+        });
+      }
+    };
+
+    mTimer.schedule(mTimerTask, 1000);
+  }
+
+  private void stopTimer(){
+    if(mTimerTask != null) {
+      mTimerTask.cancel();
+      mTimerTask = null;
+    }
+
+    if(mTimer != null) {
+      mTimer.cancel();
+      mTimer.purge();
+      mTimer = null;
     }
   }
 
@@ -415,26 +453,14 @@ abstract class BaseCameraFragment extends Fragment
   public boolean onTouch(View v, MotionEvent event) {
     int id = v.getId();
     if (id == R.id.stillshot) {
-      Timer timer = new Timer("VideoRecording");
       switch (event.getAction()){
         case MotionEvent.ACTION_DOWN:
-          mRecordDuration.setVisibility(View.VISIBLE);
-          final Activity activity = getActivity();
-          timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-              activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                  mIsRecording = startRecordingVideo();
-                }
-              });
-            }
-          }, 5000);
+          startTimer();
           return true;
 
         case MotionEvent.ACTION_UP:
-          timer.cancel();
+          stopTimer();
+
           if (mIsRecording) {
             mRecordDuration.setVisibility(View.GONE);
             stopRecordingVideo(false);

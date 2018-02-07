@@ -110,9 +110,6 @@ public interface BaseCaptureInterface {
   @DrawableRes
   int iconCapture();
 
-  /** @return true if we only want to take photographs instead of video capture */
-  boolean useStillshot();
-
   void toggleFlashMode();
 
   @BaseCaptureActivity.FlashMode

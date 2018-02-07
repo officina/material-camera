@@ -55,7 +55,6 @@ public class DemoSupportFragment extends Fragment implements View.OnClickListene
 
   private void bindViews(View view) {
     view.findViewById(R.id.launchCamera).setOnClickListener(this);
-    view.findViewById(R.id.launchCameraStillshot).setOnClickListener(this);
 
     if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
         != PackageManager.PERMISSION_GRANTED) {
@@ -83,10 +82,6 @@ public class DemoSupportFragment extends Fragment implements View.OnClickListene
             .showPortraitWarning(true)
             .allowRetry(true)
             .defaultToFrontFacing(true);
-
-    if (view.getId() == R.id.launchCameraStillshot)
-      materialCamera.stillShot(); // launches the Camera in stillshot mode
-
     materialCamera.start(CAMERA_RQ);
   }
 

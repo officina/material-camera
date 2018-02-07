@@ -69,6 +69,8 @@ import java.util.concurrent.TimeUnit;
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Camera2Fragment extends BaseCameraFragment implements View.OnClickListener {
 
+  private boolean mStillshot;
+
   private CameraDevice mCameraDevice;
   private CameraCaptureSession mPreviewSession;
   private AutoFitTextureView mTextureView;
@@ -509,104 +511,111 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
               "Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
               sensorOrientation, deviceRotation, mDisplayOrientation));
 
-      if (mInterface.useStillshot()) {
-        boolean swappedDimensions = false;
-        switch (displayRotation) {
-          case Surface.ROTATION_0:
-          case Surface.ROTATION_180:
-            if (sensorOrientation == Degrees.DEGREES_90
-                || sensorOrientation == Degrees.DEGREES_270) {
-              swappedDimensions = true;
-            }
-            break;
-          case Surface.ROTATION_90:
-          case Surface.ROTATION_270:
-            if (sensorOrientation == Degrees.DEGREES_0
-                || sensorOrientation == Degrees.DEGREES_180) {
-              swappedDimensions = true;
-            }
-            break;
-          default:
-            Log.e("stillshot", "Display rotation is invalid: " + displayRotation);
-        }
+      // Initialize stillshot related resources
+      // * USE ALWAYS PREVIEW FOR VIDEO SIZE *
+      /*
+      boolean swappedDimensions = false;
+      switch (displayRotation) {
+        case Surface.ROTATION_0:
+        case Surface.ROTATION_180:
+          if (sensorOrientation == Degrees.DEGREES_90
+              || sensorOrientation == Degrees.DEGREES_270) {
+            swappedDimensions = true;
+          }
+          break;
+        case Surface.ROTATION_90:
+        case Surface.ROTATION_270:
+          if (sensorOrientation == Degrees.DEGREES_0
+              || sensorOrientation == Degrees.DEGREES_180) {
+            swappedDimensions = true;
+          }
+          break;
+        default:
+          Log.e("stillshot", "Display rotation is invalid: " + displayRotation);
+      }
 
-        Point displaySize = new Point();
-        activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
-        int rotatedPreviewWidth = width;
-        int rotatedPreviewHeight = height;
-        int maxPreviewWidth = displaySize.x;
-        int maxPreviewHeight = displaySize.y;
+      Point displaySize = new Point();
+      activity.getWindowManager().getDefaultDisplay().getSize(displaySize);
+      int rotatedPreviewWidth = width;
+      int rotatedPreviewHeight = height;
+      int maxPreviewWidth = displaySize.x;
+      int maxPreviewHeight = displaySize.y;
 
-        if (swappedDimensions) {
-          rotatedPreviewWidth = height;
-          rotatedPreviewHeight = width;
-          maxPreviewWidth = displaySize.y;
-          maxPreviewHeight = displaySize.x;
-        }
+      if (swappedDimensions) {
+        rotatedPreviewWidth = height;
+        rotatedPreviewHeight = width;
+        maxPreviewWidth = displaySize.y;
+        maxPreviewHeight = displaySize.x;
+      }
 
-        if (maxPreviewWidth > MAX_PREVIEW_WIDTH) {
-          maxPreviewWidth = MAX_PREVIEW_WIDTH;
-        }
+      if (maxPreviewWidth > MAX_PREVIEW_WIDTH) {
+        maxPreviewWidth = MAX_PREVIEW_WIDTH;
+      }
 
-        if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
-          maxPreviewHeight = MAX_PREVIEW_HEIGHT;
-        }
+      if (maxPreviewHeight > MAX_PREVIEW_HEIGHT) {
+        maxPreviewHeight = MAX_PREVIEW_HEIGHT;
+      }
 
-        // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-        // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-        // garbage capture data.
-        mPreviewSize =
-            chooseOptimalSize(
-                map.getOutputSizes(SurfaceTexture.class),
-                rotatedPreviewWidth,
-                rotatedPreviewHeight,
-                maxPreviewWidth,
-                maxPreviewHeight,
-                largest);
+      // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
+      // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
+      // garbage capture data.
+      //mPreviewSize =
+      //    chooseOptimalSize(
+      //        map.getOutputSizes(SurfaceTexture.class),
+      //        rotatedPreviewWidth,
+      //        rotatedPreviewHeight,
+      //        maxPreviewWidth,
+      //        maxPreviewHeight,
+      //        largest);
+      */
 
-        mImageReader =
-            ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, 2);
-        mImageReader.setOnImageAvailableListener(
-            new ImageReader.OnImageAvailableListener() {
-              @Override
-              public void onImageAvailable(ImageReader reader) {
-                Image image = reader.acquireNextImage();
-                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                final byte[] bytes = new byte[buffer.remaining()];
-                buffer.get(bytes);
+      mImageReader =
+          ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, 2);
+      mImageReader.setOnImageAvailableListener(
+          new ImageReader.OnImageAvailableListener() {
+            @Override
+            public void onImageAvailable(ImageReader reader) {
+              Image image = reader.acquireNextImage();
+              ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+              final byte[] bytes = new byte[buffer.remaining()];
+              buffer.get(bytes);
 
-                final File outputPic = getOutputPictureFile();
+              final File outputPic = getOutputPictureFile();
 
-                FileOutputStream output = null;
-                try {
-                  output = new FileOutputStream(outputPic);
-                  output.write(bytes);
-                } catch (IOException e) {
-                  e.printStackTrace();
-                } finally {
-                  image.close();
-                  if (null != output) {
-                    try {
-                      output.close();
-                    } catch (IOException e) {
-                      e.printStackTrace();
-                    }
+              FileOutputStream output = null;
+              try {
+                output = new FileOutputStream(outputPic);
+                output.write(bytes);
+              } catch (IOException e) {
+                e.printStackTrace();
+              } finally {
+                image.close();
+                if (null != output) {
+                  try {
+                    output.close();
+                  } catch (IOException e) {
+                    e.printStackTrace();
                   }
                 }
-                Log.d("stillshot", "picture saved to disk - jpeg, size: " + bytes.length);
-                mOutputUri = Uri.fromFile(outputPic).toString();
-                mInterface.onShowStillshot(mOutputUri);
               }
-            },
-            mBackgroundHandler);
-      } else {
-        mMediaRecorder = new MediaRecorder();
-        mVideoSize =
-            chooseVideoSize(
-                (BaseCaptureInterface) activity, map.getOutputSizes(MediaRecorder.class));
-        mPreviewSize =
-            chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), width, height, mVideoSize);
-      }
+              Log.d("stillshot", "picture saved to disk - jpeg, size: " + bytes.length);
+              mOutputUri = Uri.fromFile(outputPic).toString();
+              mInterface.onShowStillshot(mOutputUri);
+            }
+          },
+          mBackgroundHandler);
+
+      // Initialize video related resources
+      mMediaRecorder = new MediaRecorder();
+      mVideoSize =
+          chooseVideoSize(
+              (BaseCaptureInterface) activity, map.getOutputSizes(MediaRecorder.class));
+      mPreviewSize =
+          chooseOptimalSize(
+                  map.getOutputSizes(SurfaceTexture.class),
+                  width,
+                  height,
+                  mVideoSize);
 
       int orientation = VideoStreamView.getScreenOrientation(activity);
       if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
@@ -671,7 +680,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
   @Override
   public void onPreferencesUpdated() {
     if (mInterface == null
-        || !mInterface.useStillshot()
+        //|| !mInterface.useStillshot()
         || mPreviewSession == null
         || mPreviewBuilder == null) {
       return;
@@ -688,11 +697,11 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
   private void startPreview() {
     if (null == mCameraDevice || !mTextureView.isAvailable() || null == mPreviewSize) return;
     try {
-      if (!mInterface.useStillshot()) {
+      //if (!mInterface.useStillshot()) {
         if (!setUpMediaRecorder()) {
           return;
         }
-      }
+      //}
       SurfaceTexture texture = mTextureView.getSurfaceTexture();
       assert texture != null;
       texture.setDefaultBufferSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
@@ -700,19 +709,20 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
       List<Surface> surfaces = new ArrayList<>();
       Surface previewSurface = new Surface(texture);
       surfaces.add(previewSurface);
-      if (mInterface.useStillshot()) {
-        mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-        mPreviewBuilder.addTarget(previewSurface);
-
-        surfaces.add(mImageReader.getSurface());
-      } else {
+      //if (mInterface.useStillshot()) {
+      //  mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+      //  mPreviewBuilder.addTarget(previewSurface);
+      //
+      //  surfaces.add(mImageReader.getSurface());
+      //} else {
         mPreviewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
         mPreviewBuilder.addTarget(previewSurface);
 
         Surface recorderSurface = mMediaRecorder.getSurface();
         surfaces.add(recorderSurface);
+        surfaces.add(mImageReader.getSurface()); // * ADDED *
         mPreviewBuilder.addTarget(recorderSurface);
-      }
+      //}
 
       mCameraDevice.createCaptureSession(
           surfaces,
@@ -743,20 +753,20 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     }
 
     try {
-      if (mInterface.useStillshot()) {
-        mPreviewBuilder.set(
-            CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-        // Flash is automatically enabled when necessary.
-        setFlashMode(mPreviewBuilder);
-
-        // Finally, we start displaying the camera preview.
-        mPreviewRequest = mPreviewBuilder.build();
-        mPreviewSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
-      } else {
+      //if (mInterface.useStillshot()) {
+      //  mPreviewBuilder.set(
+      //      CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+      //  // Flash is automatically enabled when necessary.
+      //  setFlashMode(mPreviewBuilder);
+      //
+      //  // Finally, we start displaying the camera preview.
+      //  mPreviewRequest = mPreviewBuilder.build();
+      //  mPreviewSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+      //} else {
         setUpCaptureRequestBuilder(mPreviewBuilder);
         mPreviewRequest = mPreviewBuilder.build();
         mPreviewSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
-      }
+      //}
     } catch (CameraAccessException e) {
       e.printStackTrace();
     }

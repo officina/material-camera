@@ -1,8 +1,8 @@
 <resources>
 
     <string name="app_name">Material Camera Sample</string>
-    <string name="launch_camera">Launch Camera for recording</string>
-    <string name="launch_camera_stillshot">Launch Camera for stillshot</string>
+    <string name="launch_camera">Launch Camera</string>
+    <!--<string name="launch_camera_stillshot">Launch Camera for stillshot</string>-->
     <string name="launch_from_fragment">Launch sample from a Fragment</string>
     <string name="launch_from_fragment_support">Launch sample from a Fragment (Support)</string>
     <string name="length_limit">Length Limit</string>

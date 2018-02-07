@@ -156,7 +156,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     final boolean audioGranted =
         ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
             == PackageManager.PERMISSION_GRANTED;
-    final boolean audioNeeded = !useStillshot() && !audioDisabled();
+    final boolean audioNeeded = !audioDisabled();
 
     String[] perms = null;
     if (cameraGranted) {
@@ -401,7 +401,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
           Activity.RESULT_OK,
           getIntent()
               .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
-              .setDataAndType(Uri.parse(uri), useStillshot() ? "image/jpeg" : "video/mp4"));
+              .setDataAndType(Uri.parse(uri), /*useStillshot() ? "image/jpeg" : */"video/mp4"));
     }
     finish();
   }
@@ -533,8 +533,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
   public int labelConfirm() {
     return getIntent()
         .getIntExtra(
-            CameraIntentKey.LABEL_CONFIRM,
-            useStillshot() ? R.string.mcam_use_stillshot : R.string.mcam_use_video);
+            CameraIntentKey.LABEL_CONFIRM, R.string.mcam_use_video);
   }
 
   @DrawableRes
@@ -548,11 +547,6 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
   public int iconCapture() {
     return getIntent()
             .getIntExtra(CameraIntentKey.ICON_STILL_SHOT, R.drawable.nowr_action_capture);
-  }
-
-  @Override
-  public boolean useStillshot() {
-    return getIntent().getBooleanExtra(CameraIntentKey.STILL_SHOT, false);
   }
 
   @DrawableRes
@@ -582,7 +576,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
 
   @Override
   public boolean shouldHideFlash() {
-    return !useStillshot() || mFlashModes == null;
+    return mFlashModes == null;
   }
 
   @Override

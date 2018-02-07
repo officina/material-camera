@@ -60,7 +60,6 @@ public class MaterialCamera {
   private boolean mRestartTimerOnRetry = false;
   private boolean mContinueTimerInPlayback = true;
   private boolean mForceCamera1 = false;
-  private boolean mStillShot;
   private boolean mAudioDisabled = false;
   private long mAutoRecord = -1;
 
@@ -293,12 +292,6 @@ public class MaterialCamera {
     return this;
   }
 
-  /** Will take a still shot instead of recording. */
-  public MaterialCamera stillShot() {
-    mStillShot = true;
-    return this;
-  }
-
   public MaterialCamera autoRecordWithDelayMs(
       @IntRange(from = -1, to = Long.MAX_VALUE) long delayMillis) {
     mAutoRecord = delayMillis;
@@ -313,7 +306,7 @@ public class MaterialCamera {
 
   public Intent getIntent() {
     final Class<?> cls =
-        !mForceCamera1 && CameraUtil.hasCamera2(mContext, mStillShot)
+        !mForceCamera1 && CameraUtil.hasCamera2(mContext)
             ? CaptureActivity2.class
             : CaptureActivity.class;
     Intent intent =
@@ -330,7 +323,6 @@ public class MaterialCamera {
             .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists)
             .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
             .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
-            .putExtra(CameraIntentKey.STILL_SHOT, mStillShot)
             .putExtra(CameraIntentKey.AUTO_RECORD, mAutoRecord)
             .putExtra(CameraIntentKey.AUDIO_DISABLED, mAudioDisabled);
 
