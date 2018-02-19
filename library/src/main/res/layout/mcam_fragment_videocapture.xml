@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout android:id="@+id/rootFrame"
                 xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -11,6 +12,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/controlsFrame"/>
+
+    <TextView
+        android:id="@+id/recordDuration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:padding="6dp"
+        android:text="@string/mcam_defaultDuration"
+        android:textColor="#A0020E"
+        android:textSize="@dimen/mcam_regular_content_fontsize"/>
 
     <RelativeLayout
         android:id="@+id/controlsFrame"
@@ -50,7 +63,8 @@
             android:scaleType="fitXY"
             android:visibility="gone"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/mcam_action_flash"/>
+            tools:src="@drawable/mcam_action_flash"
+            tools:visibility="visible"/>
 
         <ImageButton
             android:id="@+id/stillshot"
@@ -65,17 +79,19 @@
             tools:ignore="ContentDescription"
             tools:src="@drawable/mcam_action_capture"/>
 
-        <TextView
-            android:id="@+id/recordDuration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:id="@+id/pick_from_gallery"
+            android:layout_width="@dimen/mcam_action_icon_size_smaller"
+            android:layout_height="@dimen/mcam_action_icon_size_smaller"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/mcam_defaultDuration"
-            android:textColor="#A0020E"
-            android:textSize="@dimen/mcam_regular_content_fontsize"/>
+            android:background="@drawable/mcam_circle_selector"
+            android:padding="@dimen/mcam_content_inset_less"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            app:srcCompat="@drawable/mcam_action_pick_from_gallery"
+            tools:ignore="ContentDescription"/>
 
     </RelativeLayout>
 

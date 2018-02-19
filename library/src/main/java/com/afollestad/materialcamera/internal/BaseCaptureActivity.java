@@ -23,6 +23,7 @@ import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.afollestad.materialcamera.MaterialCamera;
 import com.afollestad.materialcamera.R;
@@ -40,6 +41,8 @@ import java.util.List;
  */
 public abstract class BaseCaptureActivity extends AppCompatActivity
         implements BaseCaptureInterface {
+
+    protected static final int REQUEST_CODE_PICK_FROM_GALLERY = 1000;
 
     public static final int PERMISSION_RC = 69;
     public static final int CAMERA_POSITION_UNKNOWN = 0;
@@ -372,8 +375,14 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     @Override
     protected final void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PERMISSION_RC)
+        if (BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY == requestCode) {
+            if (Activity.RESULT_OK == resultCode) {
+                Uri selectedMediaUri = data.getData();
+                Toast.makeText(this, selectedMediaUri.toString(), Toast.LENGTH_LONG).show();
+            }
+        } else if (requestCode == PERMISSION_RC) {
             showInitialRecorder();
+        }
     }
 
     @Override

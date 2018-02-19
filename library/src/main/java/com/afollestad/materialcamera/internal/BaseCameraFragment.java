@@ -13,9 +13,9 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
@@ -50,6 +50,7 @@ abstract class BaseCameraFragment extends Fragment
     protected ImageButton mButtonStillshot;
     protected ImageButton mButtonFacing;
     protected ImageButton mButtonFlash;
+    protected ImageButton mButtonPickFromGallery;
     protected TextView mRecordDuration;
     protected TextView mDelayStartCountdown;
     protected String mPictureOutputUri;
@@ -138,20 +139,23 @@ abstract class BaseCameraFragment extends Fragment
         mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
         setupFlashMode();
 
+        mButtonPickFromGallery = view.findViewById(R.id.pick_from_gallery);
+
         //mButtonStillshot.setOnClickListener(this);
         mButtonStillshot.setOnTouchListener(this);
         mButtonFacing.setOnClickListener(this);
         mButtonFlash.setOnClickListener(this);
+        mButtonPickFromGallery.setOnClickListener(this);
 
         int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         if (CameraUtil.isColorDark(primaryColor)) {
-            mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_light);
+            //mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_light);
             primaryColor = CameraUtil.darkenColor(primaryColor);
         } else {
-            mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_dark);
+            //mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_dark);
         }
         view.findViewById(R.id.controlsFrame).setBackgroundColor(primaryColor);
-        mRecordDuration.setTextColor(mIconTextColor);
+        //mRecordDuration.setTextColor(mIconTextColor);
 
         if (mMediaRecorder != null && mIsRecording) {
             //setImageRes(mButtonVideo, mInterface.iconStop());
@@ -431,6 +435,10 @@ abstract class BaseCameraFragment extends Fragment
             setupFlashMode();
         } else if (id == R.id.flash) {
             invalidateFlash(true);
+        } else if (id == R.id.pick_from_gallery) {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/* video/*");
+            getActivity().startActivityForResult(intent, BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY);
         }
     }
 
