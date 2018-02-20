@@ -79,7 +79,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         MaterialCamera materialCamera =
                 new MaterialCamera(this)
                         .saveDir(saveDir)
-                        .showPortraitWarning(true)
                         .allowRetry(true)
                         .defaultToFrontFacing(true);
         materialCamera.start(CAMERA_RQ);
@@ -106,12 +105,24 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         // Received recording or error from MaterialCamera
         if (requestCode == CAMERA_RQ) {
             if (resultCode == Activity.RESULT_OK) {
-                final File file = new File(data.getData().getPath());
-                Toast.makeText(
-                        getActivity(),
-                        String.format("Saved to: %s, size: %s", file.getAbsolutePath(), fileSize(file)),
-                        Toast.LENGTH_LONG)
-                        .show();
+
+                final int mcStatus = data.getIntExtra(MaterialCamera.EXTRA_STATUS, -1);
+                if(MaterialCamera.STATUS_RECORDED == mcStatus) {
+                    final File file = new File(data.getData().getPath());
+                    Toast.makeText(
+                            getActivity(),
+                            String.format("Saved to: %s, size: %s", file.getAbsolutePath(), fileSize(file)),
+                            Toast.LENGTH_LONG)
+                            .show();
+                } else if(MaterialCamera.STATUS_PICKED == mcStatus) {
+                    final String uri = data.getData().toString();
+                    Toast.makeText(
+                            getActivity(),
+                            String.format("Picked from gallery: %s", uri),
+                            Toast.LENGTH_LONG)
+                            .show();
+                }
+
             } else if (data != null) {
                 Exception e = (Exception) data.getSerializableExtra(MaterialCamera.EXTRA_ERROR);
                 if (e != null) {

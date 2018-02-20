@@ -1,7 +1,6 @@
 package com.afollestad.materialcamera;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.media.CamcorderProfile;
 import android.support.annotation.AttrRes;
@@ -14,7 +13,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.afollestad.materialcamera.internal.CameraIntentKey;
@@ -43,16 +41,14 @@ public class MaterialCamera {
     public static final int STATUS_RETRY = 3;
 
     private Activity mContext;
-    //private Activity mActivityContext;
     private android.app.Fragment mAppFragment;
     private android.support.v4.app.Fragment mSupportFragment;
-    //private boolean mIsFragment = false;
+    private boolean mIsFragment = false;
     private long mLengthLimit = -1;
     private boolean mAllowRetry = true;
     private boolean mAutoSubmit = false;
     private String mSaveDir;
     private int mPrimaryColor;
-    private boolean mShowPortraitWarning = true;
     private boolean mAllowChangeCamera = true;
     private boolean mDefaultToFrontFacing = false;
     private boolean mCountdownImmediately = false;
@@ -78,14 +74,14 @@ public class MaterialCamera {
     private int mIconRestart;
     private int mLabelRetry;
     private int mLabelConfirm;
+
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
-        //mActivityContext = context;
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
     }
 
     public MaterialCamera(@NonNull android.app.Fragment context) {
-        //mIsFragment = true;
+        mIsFragment = true;
         mContext = context.getActivity();
         mAppFragment = context;
         mSupportFragment = null;
@@ -93,7 +89,7 @@ public class MaterialCamera {
     }
 
     public MaterialCamera(@NonNull android.support.v4.app.Fragment context) {
-        //mIsFragment = true;
+        mIsFragment = true;
         mContext = context.getActivity();
         mSupportFragment = context;
         mAppFragment = null;
@@ -150,11 +146,6 @@ public class MaterialCamera {
 
     public MaterialCamera primaryColorAttr(@AttrRes int colorAttr) {
         return primaryColor(DialogUtils.resolveColor(mContext, colorAttr));
-    }
-
-    public MaterialCamera showPortraitWarning(boolean show) {
-        mShowPortraitWarning = show;
-        return this;
     }
 
     public MaterialCamera allowChangeCamera(boolean allowChangeCamera) {
@@ -315,7 +306,6 @@ public class MaterialCamera {
                         .putExtra(CameraIntentKey.AUTO_SUBMIT, mAutoSubmit)
                         .putExtra(CameraIntentKey.SAVE_DIR, mSaveDir)
                         .putExtra(CameraIntentKey.PRIMARY_COLOR, mPrimaryColor)
-                        .putExtra(CameraIntentKey.SHOW_PORTRAIT_WARNING, false)
                         .putExtra(CameraIntentKey.ALLOW_CHANGE_CAMERA, mAllowChangeCamera)
                         .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
                         .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
@@ -363,16 +353,13 @@ public class MaterialCamera {
     }
 
     public void start(int requestCode) {
-        ActivityCompat.startActivityForResult(mContext, getIntent(), requestCode, null);
-        //ActivityCompat.startActivity(mContext, getIntent(), requestCode, null);
-        /*
+        //ActivityCompat.startActivityForResult(mContext, getIntent(), requestCode, null);
         if (mIsFragment && mSupportFragment != null)
             mSupportFragment.startActivityForResult(getIntent(), requestCode);
         else if (mIsFragment && mAppFragment != null)
             mAppFragment.startActivityForResult(getIntent(), requestCode);
         else
-            mActivityContext.startActivityForResult(getIntent(), requestCode);
-        */
+            mContext.startActivityForResult(getIntent(), requestCode);
     }
 
     @IntDef({QUALITY_HIGH, QUALITY_LOW, QUALITY_480P, QUALITY_720P, QUALITY_1080P})
