@@ -11,6 +11,7 @@ import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -23,12 +24,13 @@ import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.afollestad.materialcamera.MaterialCamera;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.TimeLimitReachedException;
 import com.afollestad.materialcamera.util.CameraUtil;
+import com.afollestad.materialcamera.util.FilenameUtils;
+import com.afollestad.materialcamera.util.MimeUtils;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
@@ -54,6 +56,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     private int mCameraPosition = CAMERA_POSITION_UNKNOWN;
     private int mFlashMode = FLASH_MODE_OFF;
     private boolean mRequestingPermission;
+    private boolean mRequestingPickFromGallery;
     private long mRecordingStart = -1;
     private long mRecordingEnd = -1;
     private long mLengthLimit = -1;
@@ -67,6 +70,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         outState.putInt("camera_position", mCameraPosition);
         outState.putBoolean("requesting_permission", mRequestingPermission);
+        outState.putBoolean("requesting_pick_from_gallery", mRequestingPickFromGallery);
         outState.putLong("recording_start", mRecordingStart);
         outState.putLong("recording_end", mRecordingEnd);
         outState.putLong(CameraIntentKey.LENGTH_LIMIT, mLengthLimit);
@@ -124,6 +128,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         } else {
             mCameraPosition = savedInstanceState.getInt("camera_position", -1);
             mRequestingPermission = savedInstanceState.getBoolean("requesting_permission", false);
+            mRequestingPickFromGallery = savedInstanceState.getBoolean("requesting_pick_from_gallery", false);
             mRecordingStart = savedInstanceState.getLong("recording_start", -1);
             mRecordingEnd = savedInstanceState.getLong("recording_end", -1);
             mLengthLimit = savedInstanceState.getLong(CameraIntentKey.LENGTH_LIMIT, -1);
@@ -180,7 +185,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     @Override
     protected final void onPause() {
         super.onPause();
-        if (!isFinishing() && !isChangingConfigurations() && !mRequestingPermission)
+        if (!isFinishing() && !isChangingConfigurations() && !mRequestingPermission && !mRequestingPickFromGallery)
             finish();
     }
 
@@ -313,7 +318,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         if (getIntent().getBooleanExtra(CameraIntentKey.RETRY_EXITS, false)) {
             setResult(
                     RESULT_OK,
-                    new Intent().putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RETRY));
+                    new Intent().putExtra(MaterialCamera.EXTRA_STATUS, MaterialCamera.STATUS_RETRY));
             finish();
             return;
         }
@@ -327,7 +332,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
             if (outputUri == null) {
                 setResult(
                         RESULT_CANCELED,
-                        new Intent().putExtra(MaterialCamera.ERROR_EXTRA, new TimeLimitReachedException()));
+                        new Intent().putExtra(MaterialCamera.EXTRA_ERROR, new TimeLimitReachedException()));
                 finish();
                 return;
             }
@@ -376,9 +381,16 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     protected final void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY == requestCode) {
+            mRequestingPickFromGallery = false;
+
             if (Activity.RESULT_OK == resultCode) {
-                Uri selectedMediaUri = data.getData();
-                Toast.makeText(this, selectedMediaUri.toString(), Toast.LENGTH_LONG).show();
+                Uri uri = data.getData();
+                setResult(
+                        Activity.RESULT_OK,
+                        getIntent()
+                                .putExtra(MaterialCamera.EXTRA_STATUS, MaterialCamera.STATUS_PICKED)
+                                .setDataAndType(uri, MimeUtils.guessMimeTypeFromContentUri(this, uri)));
+                finish();
             }
         } else if (requestCode == PERMISSION_RC) {
             showInitialRecorder();
@@ -411,11 +423,15 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     @Override
     public final void useMedia(String uri) {
         if (uri != null) {
+            final Uri data = Uri.parse(uri);
             setResult(
                     Activity.RESULT_OK,
                     getIntent()
-                            .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
-                            .setDataAndType(Uri.parse(uri), /*useStillshot() ? "image/jpeg" : */"video/mp4"));
+                            .putExtra(MaterialCamera.EXTRA_STATUS, MaterialCamera.STATUS_RECORDED)
+                            .setDataAndType(
+                                    data,
+                                    MimeUtils.guessMimeTypeFromExtension(FilenameUtils.getExtension(uri.toString()))));
+            ///*useStillshot() ? "image/jpeg" : */"video/mp4"));
         }
         finish();
     }
@@ -606,6 +622,15 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     @Override
     public boolean shouldHideCameraFacing() {
         return !getIntent().getBooleanExtra(CameraIntentKey.ALLOW_CHANGE_CAMERA, false);
+    }
+
+    @Override
+    public void pickFromGallery() {
+        mRequestingPickFromGallery = true;
+
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/* video/*");
+        ActivityCompat.startActivityForResult(this, intent, BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY, null);
     }
 
     @IntDef({CAMERA_POSITION_UNKNOWN, CAMERA_POSITION_BACK, CAMERA_POSITION_FRONT})

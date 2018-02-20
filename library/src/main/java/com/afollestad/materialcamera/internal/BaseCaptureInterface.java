@@ -136,4 +136,6 @@ public interface BaseCaptureInterface {
     boolean audioDisabled();
 
     boolean shouldHideCameraFacing();
+
+    void pickFromGallery();
 }

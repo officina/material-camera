@@ -116,7 +116,7 @@ public class DemoSupportFragment extends Fragment implements View.OnClickListene
                         Toast.LENGTH_LONG)
                         .show();
             } else if (data != null) {
-                Exception e = (Exception) data.getSerializableExtra(MaterialCamera.ERROR_EXTRA);
+                Exception e = (Exception) data.getSerializableExtra(MaterialCamera.EXTRA_ERROR);
                 if (e != null) {
                     e.printStackTrace();
                     Toast.makeText(getContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();

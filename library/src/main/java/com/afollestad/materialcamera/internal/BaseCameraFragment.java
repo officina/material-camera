@@ -13,7 +13,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -415,7 +414,7 @@ abstract class BaseCameraFragment extends Fragment
     protected final void throwError(Exception e) {
         Activity act = getActivity();
         if (act != null) {
-            act.setResult(RESULT_CANCELED, new Intent().putExtra(MaterialCamera.ERROR_EXTRA, e));
+            act.setResult(RESULT_CANCELED, new Intent().putExtra(MaterialCamera.EXTRA_ERROR, e));
             act.finish();
         }
     }
@@ -436,9 +435,7 @@ abstract class BaseCameraFragment extends Fragment
         } else if (id == R.id.flash) {
             invalidateFlash(true);
         } else if (id == R.id.pick_from_gallery) {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/* video/*");
-            getActivity().startActivityForResult(intent, BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY);
+            ((BaseCaptureActivity) getActivity()).pickFromGallery();
         }
     }
 

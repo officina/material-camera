@@ -14,6 +14,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.afollestad.materialcamera.internal.CameraIntentKey;
@@ -35,15 +36,17 @@ public class MaterialCamera {
     public static final int QUALITY_480P = CamcorderProfile.QUALITY_480P;
     public static final int QUALITY_720P = CamcorderProfile.QUALITY_720P;
     public static final int QUALITY_1080P = CamcorderProfile.QUALITY_1080P;
-    public static final String ERROR_EXTRA = "mcam_error";
-    public static final String STATUS_EXTRA = "mcam_status";
+    public static final String EXTRA_ERROR = "mcam_error";
+    public static final String EXTRA_STATUS = "mcam_status";
     public static final int STATUS_RECORDED = 1;
-    public static final int STATUS_RETRY = 2;
-    private Context mContext;
-    private Activity mActivityContext;
+    public static final int STATUS_PICKED = 2;
+    public static final int STATUS_RETRY = 3;
+
+    private Activity mContext;
+    //private Activity mActivityContext;
     private android.app.Fragment mAppFragment;
     private android.support.v4.app.Fragment mSupportFragment;
-    private boolean mIsFragment = false;
+    //private boolean mIsFragment = false;
     private long mLengthLimit = -1;
     private boolean mAllowRetry = true;
     private boolean mAutoSubmit = false;
@@ -77,12 +80,12 @@ public class MaterialCamera {
     private int mLabelConfirm;
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
-        mActivityContext = context;
+        //mActivityContext = context;
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
     }
 
     public MaterialCamera(@NonNull android.app.Fragment context) {
-        mIsFragment = true;
+        //mIsFragment = true;
         mContext = context.getActivity();
         mAppFragment = context;
         mSupportFragment = null;
@@ -90,8 +93,8 @@ public class MaterialCamera {
     }
 
     public MaterialCamera(@NonNull android.support.v4.app.Fragment context) {
-        mIsFragment = true;
-        mContext = context.getContext();
+        //mIsFragment = true;
+        mContext = context.getActivity();
         mSupportFragment = context;
         mAppFragment = null;
         mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
@@ -360,12 +363,16 @@ public class MaterialCamera {
     }
 
     public void start(int requestCode) {
+        ActivityCompat.startActivityForResult(mContext, getIntent(), requestCode, null);
+        //ActivityCompat.startActivity(mContext, getIntent(), requestCode, null);
+        /*
         if (mIsFragment && mSupportFragment != null)
             mSupportFragment.startActivityForResult(getIntent(), requestCode);
         else if (mIsFragment && mAppFragment != null)
             mAppFragment.startActivityForResult(getIntent(), requestCode);
         else
             mActivityContext.startActivityForResult(getIntent(), requestCode);
+        */
     }
 
     @IntDef({QUALITY_HIGH, QUALITY_LOW, QUALITY_480P, QUALITY_720P, QUALITY_1080P})

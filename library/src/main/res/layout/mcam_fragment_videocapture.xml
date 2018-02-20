@@ -89,7 +89,7 @@
             android:background="@drawable/mcam_circle_selector"
             android:padding="@dimen/mcam_content_inset_less"
             android:scaleType="fitXY"
-            android:visibility="gone"
+            android:visibility="visible"
             app:srcCompat="@drawable/mcam_action_pick_from_gallery"
             tools:ignore="ContentDescription"/>
 

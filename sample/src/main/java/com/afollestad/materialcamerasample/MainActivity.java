@@ -1,19 +1,15 @@
 package com.afollestad.materialcamerasample;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Display;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.MaterialCamera;
@@ -103,14 +99,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Received recording or error from MaterialCamera
         if (requestCode == CAMERA_RQ) {
             if (resultCode == RESULT_OK) {
-                final File file = new File(data.getData().getPath());
-                Toast.makeText(
-                        this,
-                        String.format("Saved to: %s, size: %s", file.getAbsolutePath(), fileSize(file)),
-                        Toast.LENGTH_LONG)
-                        .show();
+
+                final int mcStatus = data.getIntExtra(MaterialCamera.EXTRA_STATUS, -1);
+                if(MaterialCamera.STATUS_RECORDED == mcStatus) {
+                    final File file = new File(data.getData().getPath());
+                    Toast.makeText(
+                            this,
+                            String.format("Saved to: %s, size: %s", file.getAbsolutePath(), fileSize(file)),
+                            Toast.LENGTH_LONG)
+                            .show();
+                } else if(MaterialCamera.STATUS_PICKED == mcStatus) {
+                    final String uri = data.getData().toString();
+                    Toast.makeText(
+                            this,
+                            String.format("Picked from gallery: %s", uri),
+                            Toast.LENGTH_LONG)
+                            .show();
+                }
+
             } else if (data != null) {
-                Exception e = (Exception) data.getSerializableExtra(MaterialCamera.ERROR_EXTRA);
+                Exception e = (Exception) data.getSerializableExtra(MaterialCamera.EXTRA_ERROR);
                 if (e != null) {
                     e.printStackTrace();
                     Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
