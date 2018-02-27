@@ -9,7 +9,7 @@ android {
         abortOnError false
     }
     defaultConfig {
-        applicationId "com.afollestad.materialcamerasample"
+        applicationId "cc.officina.materialcamerasample"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.compileSdk
         versionCode versions.publishVersionCode
