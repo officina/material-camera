@@ -22,6 +22,7 @@ public class Degrees {
     public static final int DEGREES_180 = 180;
     public static final int DEGREES_270 = 270;
     static final int DEGREES_360 = 360;
+
     private Degrees() {
     }
 

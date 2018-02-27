@@ -14,6 +14,7 @@ public class ManufacturerUtil {
     private static final String SAMSUNG_MANUFACTURER = "samsung";
     // Samsung Galaxy S3 info
     private static final String SAMSUNG_S3_DEVICE_COMMON_PREFIX = "d2";
+
     public ManufacturerUtil() {
     }
 

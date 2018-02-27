@@ -107,14 +107,14 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
             if (resultCode == Activity.RESULT_OK) {
 
                 final int mcStatus = data.getIntExtra(MaterialCamera.EXTRA_STATUS, -1);
-                if(MaterialCamera.STATUS_RECORDED == mcStatus) {
+                if (MaterialCamera.STATUS_RECORDED == mcStatus) {
                     final File file = new File(data.getData().getPath());
                     Toast.makeText(
                             getActivity(),
                             String.format("Saved to: %s, size: %s", file.getAbsolutePath(), fileSize(file)),
                             Toast.LENGTH_LONG)
                             .show();
-                } else if(MaterialCamera.STATUS_PICKED == mcStatus) {
+                } else if (MaterialCamera.STATUS_PICKED == mcStatus) {
                     final String uri = data.getData().toString();
                     Toast.makeText(
                             getActivity(),
@@ -122,7 +122,6 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                             Toast.LENGTH_LONG)
                             .show();
                 }
-
             } else if (data != null) {
                 Exception e = (Exception) data.getSerializableExtra(MaterialCamera.EXTRA_ERROR);
                 if (e != null) {

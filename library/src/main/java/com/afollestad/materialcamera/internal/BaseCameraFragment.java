@@ -56,6 +56,9 @@ abstract class BaseCameraFragment extends Fragment
     protected String mVideoOutputUri;
     protected BaseCaptureInterface mInterface;
     protected Handler mPositionHandler;
+    protected MediaRecorder mMediaRecorder;
+    private boolean mIsRecording;
+    private int mIconTextColor;
     private final Runnable mPositionUpdater =
             new Runnable() {
                 @Override
@@ -81,9 +84,6 @@ abstract class BaseCameraFragment extends Fragment
                         mPositionHandler.postDelayed(this, 1000);
                 }
             };
-    protected MediaRecorder mMediaRecorder;
-    private boolean mIsRecording;
-    private int mIconTextColor;
     private boolean mDidAutoRecord = false;
     private Handler mDelayHandler;
     private int mDelayCurrentSecond = -1;

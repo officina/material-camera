@@ -44,8 +44,6 @@ import java.util.List;
 public abstract class BaseCaptureActivity extends AppCompatActivity
         implements BaseCaptureInterface {
 
-    protected static final int REQUEST_CODE_PICK_FROM_GALLERY = 1000;
-
     public static final int PERMISSION_RC = 69;
     public static final int CAMERA_POSITION_UNKNOWN = 0;
     public static final int CAMERA_POSITION_FRONT = 1;
@@ -53,6 +51,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     public static final int FLASH_MODE_OFF = 0;
     public static final int FLASH_MODE_ALWAYS_ON = 1;
     public static final int FLASH_MODE_AUTO = 2;
+    protected static final int REQUEST_CODE_PICK_FROM_GALLERY = 1000;
     private int mCameraPosition = CAMERA_POSITION_UNKNOWN;
     private int mFlashMode = FLASH_MODE_OFF;
     private boolean mRequestingPermission;

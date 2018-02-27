@@ -6,5 +6,6 @@ package com.afollestad.materialcamera.internal;
 interface CameraUriInterface {
 
     String getPictureOutputUri();
+
     String getVideoOutputUri();
 }

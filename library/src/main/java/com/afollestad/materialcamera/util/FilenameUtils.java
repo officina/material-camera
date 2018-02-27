@@ -1,5 +1,3 @@
-
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -83,22 +81,19 @@ import java.util.Stack;
  */
 public class FilenameUtils {
 
-    private static final int NOT_FOUND = -1;
-
     /**
      * The extension separator character.
      *
      * @since 1.4
      */
     public static final char EXTENSION_SEPARATOR = '.';
-
     /**
      * The extension separator String.
      *
      * @since 1.4
      */
     public static final String EXTENSION_SEPARATOR_STR = Character.toString(EXTENSION_SEPARATOR);
-
+    private static final int NOT_FOUND = -1;
     /**
      * The Unix separator character.
      */

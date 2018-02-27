@@ -1,4 +1,3 @@
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -78,6 +77,19 @@ public enum IOCase implements Serializable {
     //-----------------------------------------------------------------------
 
     /**
+     * Constructs a new instance.
+     *
+     * @param name      the name
+     * @param sensitive the sensitivity
+     */
+    IOCase(final String name, final boolean sensitive) {
+        this.name = name;
+        this.sensitive = sensitive;
+    }
+
+    //-----------------------------------------------------------------------
+
+    /**
      * Factory method to create an IOCase from a name.
      *
      * @param name the name to find
@@ -92,19 +104,6 @@ public enum IOCase implements Serializable {
             }
         }
         throw new IllegalArgumentException("Invalid IOCase name: " + name);
-    }
-
-    //-----------------------------------------------------------------------
-
-    /**
-     * Constructs a new instance.
-     *
-     * @param name      the name
-     * @param sensitive the sensitivity
-     */
-    IOCase(final String name, final boolean sensitive) {
-        this.name = name;
-        this.sensitive = sensitive;
     }
 
     /**
