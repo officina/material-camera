@@ -30,6 +30,6 @@ repositories {
 }
 
 dependencies {
-    compile project(':library')
+    compile project(':cameralib')
     compile 'com.android.support:appcompat-v7:' + versions.supportLib
 }

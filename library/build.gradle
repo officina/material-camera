@@ -17,6 +17,8 @@ android {
         versionCode versions.publishVersionCode
         versionName versions.publishVersion
         vectorDrawables.useSupportLibrary = true
+        defaultPublishConfig 'release'
+        publishNonDefault true
     }
     lintOptions {
         abortOnError false
