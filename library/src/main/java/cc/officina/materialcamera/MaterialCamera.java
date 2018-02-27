@@ -31,13 +31,14 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 
-import cc.officina.materialcamera.internal.CameraIntentKey;
-import cc.officina.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.util.DialogUtils;
 
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import cc.officina.materialcamera.internal.CameraIntentKey;
+import cc.officina.materialcamera.util.CameraUtil;
 
 @SuppressWarnings("WeakerAccess")
 public class MaterialCamera {
@@ -122,11 +123,23 @@ public class MaterialCamera {
         return countdownMillis((int) (lengthLimitMin * 1000f * 60f));
     }
 
+    /**
+     * Whether or not 'Retry' is visible during playback.
+     *
+     * @param allowRetry
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera allowRetry(boolean allowRetry) {
         mAllowRetry = allowRetry;
         return this;
     }
 
+    /**
+     * Whether or not user is allowed to playback videos after recording. This can affect other things, discussed in the next section.
+     *
+     * @param autoSubmit
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera autoSubmit(boolean autoSubmit) {
         mAutoSubmit = autoSubmit;
         return this;
@@ -137,6 +150,12 @@ public class MaterialCamera {
         return this;
     }
 
+    /**
+     * The folder recorded videos are saved to.
+     *
+     * @param dir
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera saveDir(@Nullable File dir) {
         if (dir == null)
             return saveDir((String) null);
@@ -157,30 +176,66 @@ public class MaterialCamera {
         return primaryColor(ContextCompat.getColor(mContext, colorRes));
     }
 
+    /**
+     * The theme color used for the camera, defaults to colorPrimary of Activity in the constructor.
+     *
+     * @param colorAttr
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera primaryColorAttr(@AttrRes int colorAttr) {
         return primaryColor(DialogUtils.resolveColor(mContext, colorAttr));
     }
 
+    /**
+     * Allows the user to change cameras.
+     *
+     * @param allowChangeCamera
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera allowChangeCamera(boolean allowChangeCamera) {
         mAllowChangeCamera = allowChangeCamera;
         return this;
     }
 
+    /**
+     * Whether or not the camera will initially show the front facing camera.
+     *
+     * @param frontFacing
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera defaultToFrontFacing(boolean frontFacing) {
         mDefaultToFrontFacing = frontFacing;
         return this;
     }
 
+    /**
+     * If true, the 'Retry' button in the playback screen will exit the camera instead of going back to the recorder.
+     *
+     * @param exits
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera retryExits(boolean exits) {
         mRetryExists = exits;
         return this;
     }
 
+    /**
+     * If true, the countdown timer is reset to 0 when the user taps 'Retry' in playback.
+     *
+     * @param restart
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera restartTimerOnRetry(boolean restart) {
         mRestartTimerOnRetry = restart;
         return this;
     }
 
+    /**
+     * If true, the countdown timer will continue to go down during playback, rather than pausing.
+     *
+     * @param continueTimer
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera continueTimerInPlayback(boolean continueTimer) {
         mContinueTimerInPlayback = continueTimer;
         return this;
@@ -191,6 +246,12 @@ public class MaterialCamera {
         return this;
     }
 
+    /**
+     * Set to true to record video without any audio.
+     *
+     * @param disabled
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera audioDisabled(boolean disabled) {
         mAudioDisabled = disabled;
         return this;
@@ -204,103 +265,215 @@ public class MaterialCamera {
         return videoEncodingBitRate(rate);
     }
 
+    /**
+     * Sets a custom bit rate for video recording.
+     *
+     * @param rate
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera videoEncodingBitRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
         mVideoEncodingBitRate = rate;
         return this;
     }
 
+    /**
+     * Sets a custom bit rate for audio recording.
+     *
+     * @param rate
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera audioEncodingBitRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
         mAudioEncodingBitRate = rate;
         return this;
     }
 
+    /**
+     * Sets a custom frame rate (FPS) for video recording.
+     *
+     * @param rate
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera videoFrameRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
         mVideoFrameRate = rate;
         return this;
     }
 
+    /**
+     * Sets a preferred height for the recorded video output.
+     *
+     * @param height
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera videoPreferredHeight(
             @IntRange(from = 1, to = Integer.MAX_VALUE) int height) {
         mVideoPreferredHeight = height;
         return this;
     }
 
+    /**
+     * Sets a preferred aspect ratio for the recorded video output.
+     *
+     * @param ratio
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera videoPreferredAspect(
             @FloatRange(from = 0.1, to = Float.MAX_VALUE) float ratio) {
         mVideoPreferredAspect = ratio;
         return this;
     }
 
+    /**
+     * Sets a max file size of 5MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
+     *
+     * @param size
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera maxAllowedFileSize(long size) {
         mMaxFileSize = size;
         return this;
     }
 
+    /**
+     * Sets a quality profile, manually setting bit rates or frame rates with other settings will overwrite individual quality profile settings.
+     *
+     * @param profile
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera qualityProfile(@QualityProfile int profile) {
         mQualityProfile = profile;
         return this;
     }
 
+    /**
+     * Sets a custom icon for the button used to start recording.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconRecord(@DrawableRes int iconRes) {
         mIconRecord = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom icon for the button used to stop recording.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconStop(@DrawableRes int iconRes) {
         mIconStop = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom icon for the button used to switch to the front camera.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconFrontCamera(@DrawableRes int iconRes) {
         mIconFrontCamera = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom icon for the button used to switch to the rear camera.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconRearCamera(@DrawableRes int iconRes) {
         mIconRearCamera = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom icon used to start playback.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconPlay(@DrawableRes int iconRes) {
         mIconPlay = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom icon used to pause playback.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconPause(@DrawableRes int iconRes) {
         mIconPause = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom icon used to restart playback.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera iconRestart(@DrawableRes int iconRes) {
         mIconRestart = iconRes;
         return this;
     }
 
+    /**
+     * Sets a custom button label for the button used to retry recording, when available.
+     *
+     * @param stringRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera labelRetry(@StringRes int stringRes) {
         mLabelRetry = stringRes;
         return this;
     }
 
+    /**
+     * Sets a custom button label for the button used to confirm/submit a recording.
+     * This has been replaced with labelConfirm.
+     *
+     * @param stringRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     @Deprecated
-  /*
-     This has been replaced with labelConfirm
-  */
     public MaterialCamera labelUseVideo(@StringRes int stringRes) {
         mLabelConfirm = stringRes;
         return this;
     }
 
+    /**
+     * Sets a custom button label for the button used to confirm/submit a recording.
+     *
+     * @param stringRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera labelConfirm(@StringRes int stringRes) {
         mLabelConfirm = stringRes;
         return this;
     }
 
+    /**
+     * Same as the above, expressed with milliseconds instead of seconds.
+     *
+     * @param delayMillis
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera autoRecordWithDelayMs(
             @IntRange(from = -1, to = Long.MAX_VALUE) long delayMillis) {
         mAutoRecord = delayMillis;
         return this;
     }
 
+    /**
+     * The video camera will start recording automatically after a 5 second countdown. This disables switching between the front and back camera initially.
+     *
+     * @param delaySeconds
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera autoRecordWithDelaySec(
             @IntRange(from = -1, to = Long.MAX_VALUE) int delaySeconds) {
         mAutoRecord = delaySeconds * 1000;
@@ -365,6 +538,11 @@ public class MaterialCamera {
         return intent;
     }
 
+    /**
+     * Starts the camera activity, the result will be sent back to the current Activity.
+     *
+     * @param requestCode
+     */
     public void start(int requestCode) {
         //ActivityCompat.startActivityForResult(mContext, getIntent(), requestCode, null);
         if (mIsFragment && mSupportFragment != null)
