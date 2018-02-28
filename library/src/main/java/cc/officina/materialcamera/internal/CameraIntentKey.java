@@ -51,6 +51,7 @@ public class CameraIntentKey {
     public static final String LABEL_RETRY = "label_retry";
     public static final String LABEL_CONFIRM = "label_confirm";
     public static final String AUTO_RECORD = "auto_record";
+    public static final String ALLOW_VIDEO_RECORDING = "allow_video_recording";
 
     private CameraIntentKey() {
     }

@@ -42,13 +42,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import cc.officina.materialcamera.MaterialCamera;
-import cc.officina.materialcamera.R;
-import cc.officina.materialcamera.util.CameraUtil;
-
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import cc.officina.materialcamera.MaterialCamera;
+import cc.officina.materialcamera.R;
+import cc.officina.materialcamera.util.CameraUtil;
 
 import static android.app.Activity.RESULT_CANCELED;
 
@@ -487,7 +487,9 @@ abstract class BaseCameraFragment extends Fragment
         if (id == R.id.stillshot) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    startTimer();
+                    if (mInterface.allowVideoRecording()) {
+                        startTimer();
+                    }
                     return true;
 
                 case MotionEvent.ACTION_UP:

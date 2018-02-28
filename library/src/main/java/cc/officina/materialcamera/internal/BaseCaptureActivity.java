@@ -171,7 +171,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         final boolean audioGranted =
                 ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                         == PackageManager.PERMISSION_GRANTED;
-        final boolean audioNeeded = !audioDisabled();
+        final boolean audioNeeded = !audioDisabled() && allowVideoRecording();
 
         String[] perms = null;
         if (cameraGranted) {
@@ -643,6 +643,11 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/* video/*");
         ActivityCompat.startActivityForResult(this, intent, BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY, null);
+    }
+
+    @Override
+    public boolean allowVideoRecording() {
+        return getIntent().getBooleanExtra(CameraIntentKey.ALLOW_VIDEO_RECORDING, false);
     }
 
     @IntDef({CAMERA_POSITION_UNKNOWN, CAMERA_POSITION_BACK, CAMERA_POSITION_FRONT})

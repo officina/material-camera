@@ -88,6 +88,7 @@ public class MaterialCamera {
     private int mIconRestart;
     private int mLabelRetry;
     private int mLabelConfirm;
+    private boolean mAllowVideoRecording;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -480,6 +481,17 @@ public class MaterialCamera {
         return this;
     }
 
+    /**
+     * Allows the user to use video recording.
+     *
+     * @param allowVideoRecording
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera allowVideoRecording(boolean allowVideoRecording) {
+        mAllowVideoRecording = allowVideoRecording;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls =
                 !mForceCamera1 && CameraUtil.hasCamera2(mContext)
@@ -499,7 +511,8 @@ public class MaterialCamera {
                         .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
                         .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
                         .putExtra(CameraIntentKey.AUTO_RECORD, mAutoRecord)
-                        .putExtra(CameraIntentKey.AUDIO_DISABLED, mAudioDisabled);
+                        .putExtra(CameraIntentKey.AUDIO_DISABLED, mAudioDisabled)
+                        .putExtra(CameraIntentKey.ALLOW_VIDEO_RECORDING, mAllowVideoRecording);
 
         if (mVideoEncodingBitRate > 0)
             intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoEncodingBitRate);

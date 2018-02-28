@@ -151,4 +151,6 @@ public interface BaseCaptureInterface {
     boolean shouldHideCameraFacing();
 
     void pickFromGallery();
+
+    boolean allowVideoRecording();
 }
