@@ -955,7 +955,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             mMediaRecorder = new MediaRecorder();
 
         boolean canUseAudio = true;
-        boolean audioEnabled = !mInterface.audioDisabled();
+        boolean audioEnabled = mInterface.allowVideoRecording() && !mInterface.audioDisabled();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             canUseAudio =
                     ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO)
