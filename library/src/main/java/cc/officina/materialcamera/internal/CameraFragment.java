@@ -367,18 +367,17 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mCamera.unlock();
             mMediaRecorder.setCamera(mCamera);
 
-            boolean canUseAudio = true;
+            boolean allowVideoRecording = mInterface.allowVideoRecording();
+            boolean canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
             boolean audioEnabled = !mInterface.audioDisabled();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                canUseAudio =
-                        ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO)
-                                == PackageManager.PERMISSION_GRANTED;
-
-            if (canUseAudio && audioEnabled) {
-                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-            } else if (audioEnabled) {
-                Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
+            if(allowVideoRecording) {
+                if (canUseAudio && audioEnabled) {
+                    mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+                } else if (audioEnabled) {
+                    Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
+                }
             }
+
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
 
             final CamcorderProfile profile =
@@ -389,7 +388,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mMediaRecorder.setVideoEncodingBitRate(mInterface.videoEncodingBitRate(profile.videoBitRate));
             mMediaRecorder.setVideoEncoder(profile.videoCodec);
 
-            if (canUseAudio && audioEnabled) {
+            if (allowVideoRecording && canUseAudio && audioEnabled) {
                 mMediaRecorder.setAudioEncodingBitRate(
                         mInterface.audioEncodingBitRate(profile.audioBitRate));
                 mMediaRecorder.setAudioChannels(profile.audioChannels);
