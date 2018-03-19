@@ -1,1 +1,2 @@
 include ':sample', ':cameralib'
+project(':cameralib').projectDir = new File('library')

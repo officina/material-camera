@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .saveDir(saveDir)
                         .defaultToFrontFacing(true)
                         .allowRetry(true)
+                        .allowVideoRecording(true)
+                        .videoPreferredAspect(16f/9f)
                         .autoSubmit(false)
                         .labelConfirm(R.string.mcam_use_video);
         materialCamera.start(CAMERA_RQ);

@@ -83,6 +83,7 @@ public class DemoSupportFragment extends Fragment implements View.OnClickListene
                 new MaterialCamera(this)
                         .saveDir(saveDir)
                         .allowRetry(true)
+                        .allowVideoRecording(true)
                         .defaultToFrontFacing(true);
         materialCamera.start(CAMERA_RQ);
     }

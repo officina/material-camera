@@ -79,6 +79,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
         MaterialCamera materialCamera =
                 new MaterialCamera(this)
                         .saveDir(saveDir)
+                        .allowVideoRecording(true)
                         .allowRetry(true)
                         .defaultToFrontFacing(true);
         materialCamera.start(CAMERA_RQ);
