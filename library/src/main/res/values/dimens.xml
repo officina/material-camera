@@ -18,6 +18,7 @@
 <resources>
 
     <dimen name="mcam_toolbar_elevation">4dp</dimen>
+    <dimen name="mcam_toolbar_min_height">60dp</dimen>
     <dimen name="mcam_content_inset_less">12dp</dimen>
     <dimen name="mcam_content_inset">16dp</dimen>
     <dimen name="mcam_content_inset_double">32dp</dimen>

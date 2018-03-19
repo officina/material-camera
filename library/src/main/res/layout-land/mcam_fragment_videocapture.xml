@@ -25,10 +25,10 @@
 
     <include
         layout="@layout/mcam_include_camera_preview"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toLeftOf="@+id/controlsFrame"
-        android:layout_toStartOf="@+id/controlsFrame"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:id="@+id/recordDuration"
@@ -46,12 +46,15 @@
 
     <RelativeLayout
         android:id="@+id/controlsFrame"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_toEndOf="@+id/texture"
+        android:layout_toRightOf="@+id/texture"
         android:background="?colorPrimaryDark"
         android:elevation="@dimen/mcam_toolbar_elevation"
+        android:minWidth="@dimen/mcam_toolbar_min_height"
         android:paddingBottom="@dimen/mcam_content_inset"
         android:paddingLeft="@dimen/mcam_content_inset_less"
         android:paddingRight="@dimen/mcam_content_inset_less"
@@ -85,27 +88,17 @@
             tools:visibility="visible"/>
 
         <ImageButton
-            android:id="@+id/video"
-            android:layout_width="@dimen/mcam_action_icon_size"
-            android:layout_height="@dimen/mcam_action_icon_size"
-            android:layout_centerInParent="true"
-            android:background="@drawable/mcam_circle_selector"
-            android:padding="@dimen/mcam_content_inset_less"
-            android:scaleType="fitXY"
-            tools:ignore="ContentDescription"
-            tools:src="@drawable/mcam_action_capture"/>
-
-        <ImageButton
             android:id="@+id/stillshot"
             android:layout_width="@dimen/mcam_action_icon_size"
             android:layout_height="@dimen/mcam_action_icon_size"
             android:layout_centerInParent="true"
+            android:layout_gravity="center"
             android:background="@drawable/mcam_circle_selector"
             android:padding="@dimen/mcam_content_inset_less"
-            android:scaleType="fitXY"
-            android:visibility="gone"
+            android:scaleType="center"
+            android:visibility="visible"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/mcam_action_stillshot"/>
+            tools:src="@drawable/mcam_action_capture"/>
 
         <ImageButton
             android:id="@+id/pick_from_gallery"

@@ -26,8 +26,7 @@
     <include
         layout="@layout/mcam_include_camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/controlsFrame"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/recordDuration"
@@ -44,10 +43,12 @@
     <RelativeLayout
         android:id="@+id/controlsFrame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
+        android:layout_below="@+id/texture"
         android:background="?colorPrimaryDark"
         android:elevation="@dimen/mcam_toolbar_elevation"
+        android:minHeight="@dimen/mcam_toolbar_min_height"
         android:paddingBottom="@dimen/mcam_content_inset_less"
         android:paddingLeft="@dimen/mcam_content_inset"
         android:paddingRight="@dimen/mcam_content_inset"

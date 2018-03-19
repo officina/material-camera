@@ -965,7 +965,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             }
         }
 
-        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+        mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
         final CamcorderProfile profile = CamcorderProfile.get(0, mInterface.qualityProfile());
         mMediaRecorder.setOutputFormat(profile.fileFormat);
