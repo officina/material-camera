@@ -59,9 +59,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.Toast;
 
-import cc.officina.materialcamera.R;
-import cc.officina.materialcamera.util.CameraUtil;
-import cc.officina.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -76,6 +73,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+
+import cc.officina.materialcamera.R;
+import cc.officina.materialcamera.util.CameraUtil;
+import cc.officina.materialcamera.util.Degrees;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class Camera2Fragment extends BaseCameraFragment implements View.OnClickListener {
@@ -299,14 +300,33 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         Size backupSize = null;
         for (Size size : choices) {
             if (size.getHeight() <= ci.videoPreferredHeight()) {
-                if (size.getWidth() == size.getHeight() * ci.videoPreferredAspect())
+
+                // from here we can choose a valid size
+                final float preferredWidth = size.getHeight() * ci.videoPreferredAspect();
+                if (size.getWidth() == preferredWidth) {
+                    // exact resolution: return immediate
                     return size;
-                if (ci.videoPreferredHeight() >= size.getHeight())
-                    backupSize = size;
+                } else {
+                    // backup
+                    if (backupSize == null) {
+                        backupSize = size;
+                    } else {
+                        // get size according best aspect ratio and highest height
+                        float backupSizeAspectRatio = backupSize.getWidth() * 1f / backupSize.getHeight() * 1f;
+                        float newSizeAspectRatio = size.getWidth() * 1f / size.getHeight() * 1f;
+                        float backupSizeAspectRatioDelta = Math.abs(ci.videoPreferredAspect() - backupSizeAspectRatio);
+                        float newSizeAspectRatioDelta = Math.abs(ci.videoPreferredAspect() - newSizeAspectRatio);
+                        if (newSizeAspectRatioDelta < backupSizeAspectRatioDelta) {
+                            backupSize = size;
+                        }
+                    }
+                }
             }
         }
+
         if (backupSize != null)
             return backupSize;
+
         LOG(Camera2Fragment.class, "Couldn't find any suitable video size");
         return choices[choices.length - 1];
     }
@@ -957,7 +977,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         boolean allowVideoRecording = mInterface.allowVideoRecording();
         boolean canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
         boolean audioEnabled = !mInterface.audioDisabled();
-        if(allowVideoRecording) {
+        if (allowVideoRecording) {
             if (canUseAudio && audioEnabled) {
                 mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
             } else if (audioEnabled) {

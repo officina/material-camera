@@ -69,14 +69,33 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         Camera.Size backupSize = null;
         for (Camera.Size size : choices) {
             if (size.height <= ci.videoPreferredHeight()) {
-                if (size.width == size.height * ci.videoPreferredAspect())
+
+                // from here we can choose a valid size
+                final float preferredWidth = size.height * ci.videoPreferredAspect();
+                if (size.width == preferredWidth) {
+                    // exact resolution: return immediate
                     return size;
-                if (ci.videoPreferredHeight() >= size.height)
-                    backupSize = size;
+                } else {
+                    // backup
+                    if (backupSize == null) {
+                        backupSize = size;
+                    } else {
+                        // get size according best aspect ratio and highest height
+                        float backupSizeAspectRatio = backupSize.width * 1f / backupSize.height * 1f;
+                        float newSizeAspectRatio = size.width * 1f / size.height * 1f;
+                        float backupSizeAspectRatioDelta = Math.abs(ci.videoPreferredAspect() - backupSizeAspectRatio);
+                        float newSizeAspectRatioDelta = Math.abs(ci.videoPreferredAspect() - newSizeAspectRatio);
+                        if (newSizeAspectRatioDelta < backupSizeAspectRatioDelta) {
+                            backupSize = size;
+                        }
+                    }
+                }
             }
         }
+
         if (backupSize != null)
             return backupSize;
+
         LOG(CameraFragment.class, "Couldn't find any suitable video size");
         return choices.get(choices.size() - 1);
     }
