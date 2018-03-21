@@ -23,6 +23,7 @@ public class CameraIntentKey {
     public static final String AUTO_SUBMIT = "auto_submit";
     public static final String SAVE_DIR = "save_dir";
     public static final String PRIMARY_COLOR = "primary_color";
+    public static final String ICON_TEXT_COLOR = "icon_text_color";
     public static final String DEFAULT_TO_FRONT_FACING = "default_to_front_facing";
     public static final String COUNTDOWN_IMMEDIATELY = "countdown_immediately";
     public static final String RETRY_EXITS = "retry_exits";
@@ -44,7 +45,7 @@ public class CameraIntentKey {
     public static final String ICON_PLAY = "icon_play";
     public static final String ICON_PAUSE = "icon_pause";
     public static final String ICON_RESTART = "icon_restart";
-    public static final String ICON_STILL_SHOT = "icon_still_shot";
+    public static final String ICON_CAPTURE = "icon_capture";
     public static final String ICON_FLASH_AUTO = "icon_flash_auto";
     public static final String ICON_FLASH_ON = "icon_flash_on";
     public static final String ICON_FLASH_OFF = "icon_flash_off";
@@ -52,6 +53,10 @@ public class CameraIntentKey {
     public static final String LABEL_CONFIRM = "label_confirm";
     public static final String AUTO_RECORD = "auto_record";
     public static final String ALLOW_VIDEO_RECORDING = "allow_video_recording";
+    public static final String ALLOW_PICK_FROM_GALLERY = "allow_pick_from_gallery";
+    public static final String ICON_PICK_FROM_GALLERY = "icon_pick_from_gallery";
+    public static final String ICON_NAVIGATION = "icon_navigation";
+    public static final String SHOW_NAVIGATION_ICON = "show_navigation_icon";
 
     private CameraIntentKey() {
     }

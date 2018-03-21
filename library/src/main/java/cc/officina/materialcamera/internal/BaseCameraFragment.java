@@ -59,6 +59,7 @@ abstract class BaseCameraFragment extends Fragment
     protected ImageButton mButtonFacing;
     protected ImageButton mButtonFlash;
     protected ImageButton mButtonPickFromGallery;
+    protected ImageButton mButtonNavigation;
     protected TextView mRecordDuration;
     protected TextView mDelayStartCountdown;
     protected String mPictureOutputUri;
@@ -67,6 +68,7 @@ abstract class BaseCameraFragment extends Fragment
     protected Handler mPositionHandler;
     protected MediaRecorder mMediaRecorder;
     private boolean mIsRecording;
+    private int mPrimaryColor;
     private int mIconTextColor;
     private final Runnable mPositionUpdater =
             new Runnable() {
@@ -121,7 +123,7 @@ abstract class BaseCameraFragment extends Fragment
         }
         Drawable d = AppCompatResources.getDrawable(iv.getContext(), res);
         d = DrawableCompat.wrap(d.mutate());
-        //DrawableCompat.setTint(d, mIconTextColor);
+        DrawableCompat.setTint(d, mIconTextColor);
         iv.setImageDrawable(d);
     }
 
@@ -129,6 +131,9 @@ abstract class BaseCameraFragment extends Fragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mPrimaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
+        mIconTextColor = getArguments().getInt(CameraIntentKey.ICON_TEXT_COLOR);
 
         mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
         mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
@@ -148,22 +153,22 @@ abstract class BaseCameraFragment extends Fragment
         setupFlashMode();
 
         mButtonPickFromGallery = view.findViewById(R.id.pick_from_gallery);
+        mButtonPickFromGallery.setVisibility(mInterface.allowPickFromGallery() ? View.VISIBLE : View.GONE);
+        setImageRes(mButtonPickFromGallery, mInterface.iconPickFromGallery());
+
+        mButtonNavigation = view.findViewById(R.id.navigation);
+        mButtonNavigation.setVisibility(mInterface.shouldShowNavigationIcon() ? View.VISIBLE : View.GONE);
+        setImageRes(mButtonNavigation, mInterface.iconNavigation());
 
         //mButtonStillshot.setOnClickListener(this);
         mButtonStillshot.setOnTouchListener(this);
         mButtonFacing.setOnClickListener(this);
         mButtonFlash.setOnClickListener(this);
         mButtonPickFromGallery.setOnClickListener(this);
+        mButtonNavigation.setOnClickListener(this);
 
-        int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
-        if (CameraUtil.isColorDark(primaryColor)) {
-            //mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_light);
-            primaryColor = CameraUtil.darkenColor(primaryColor);
-        } else {
-            //mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_dark);
-        }
-        view.findViewById(R.id.controlsFrame).setBackgroundColor(primaryColor);
-        //mRecordDuration.setTextColor(mIconTextColor);
+        view.findViewById(R.id.controlsFrame).setBackgroundColor(mPrimaryColor);
+        mRecordDuration.setBackgroundColor(mPrimaryColor);
 
         if (mMediaRecorder != null && mIsRecording) {
             //setImageRes(mButtonVideo, mInterface.iconStop());
@@ -179,7 +184,7 @@ abstract class BaseCameraFragment extends Fragment
 
         mRecordDuration.setVisibility(View.GONE);
         mButtonStillshot.setVisibility(View.VISIBLE);
-        setImageRes(mButtonStillshot, mInterface.iconCapture());
+        mButtonStillshot.setImageResource(mInterface.iconCapture());
         mButtonFlash.setVisibility(View.VISIBLE);
 
         if (mInterface.autoRecordDelay() < 1000) {
@@ -269,6 +274,8 @@ abstract class BaseCameraFragment extends Fragment
         mButtonFacing = null;
         mButtonFlash = null;
         mRecordDuration = null;
+        mButtonPickFromGallery = null;
+        mButtonNavigation = null;
     }
 
     @Override
@@ -392,14 +399,14 @@ abstract class BaseCameraFragment extends Fragment
             startCounter();
         }
 
-        setImageRes(mButtonStillshot, mInterface.iconRecord());
+        mButtonStillshot.setImageResource(mInterface.iconRecord());
         mInterface.setDidRecord(true);
 
         return true;
     }
 
     public void stopRecordingVideo(boolean reachedZero) {
-        setImageRes(mButtonStillshot, mInterface.iconCapture());
+        mButtonStillshot.setImageResource(mInterface.iconCapture());
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
@@ -445,6 +452,8 @@ abstract class BaseCameraFragment extends Fragment
             invalidateFlash(true);
         } else if (id == R.id.pick_from_gallery) {
             ((BaseCaptureActivity) getActivity()).pickFromGallery();
+        } else if (id == R.id.navigation) {
+            getActivity().onBackPressed();
         }
     }
 

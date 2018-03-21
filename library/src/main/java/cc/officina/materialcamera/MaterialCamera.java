@@ -63,6 +63,7 @@ public class MaterialCamera {
     private boolean mAutoSubmit = false;
     private String mSaveDir;
     private int mPrimaryColor;
+    private int mIconTextColor;
     private boolean mAllowChangeCamera = true;
     private boolean mDefaultToFrontFacing = false;
     private boolean mCountdownImmediately = false;
@@ -79,6 +80,7 @@ public class MaterialCamera {
     private float mVideoPreferredAspect = -1f;
     private long mMaxFileSize = -1;
     private int mQualityProfile = -1;
+    private int mIconCapture;
     private int mIconRecord;
     private int mIconStop;
     private int mIconFrontCamera;
@@ -86,13 +88,21 @@ public class MaterialCamera {
     private int mIconPlay;
     private int mIconPause;
     private int mIconRestart;
+    private int mIconPickFromGallery;
+    private int mIconNavigation;
+    private int mIconFlashAuto;
+    private int mIconFlashOn;
+    private int mIconFlashOff;
     private int mLabelRetry;
     private int mLabelConfirm;
     private boolean mAllowVideoRecording;
+    private boolean mAllowPickFromGallery;
+    private boolean mShowNavigationIcon;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
+        mIconTextColor = DialogUtils.resolveColor(mContext, R.attr.colorAccent);
     }
 
     public MaterialCamera(@NonNull android.app.Fragment context) {
@@ -101,6 +111,7 @@ public class MaterialCamera {
         mAppFragment = context;
         mSupportFragment = null;
         mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
+        mIconTextColor = DialogUtils.resolveColor(mContext, R.attr.colorAccent);
     }
 
     public MaterialCamera(@NonNull android.support.v4.app.Fragment context) {
@@ -109,6 +120,7 @@ public class MaterialCamera {
         mSupportFragment = context;
         mAppFragment = null;
         mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
+        mIconTextColor = DialogUtils.resolveColor(mContext, R.attr.colorAccent);
     }
 
     public MaterialCamera countdownMillis(long lengthLimitMs) {
@@ -168,11 +180,23 @@ public class MaterialCamera {
         return this;
     }
 
+    /**
+     * The theme color used for the camera, defaults to colorPrimary of Activity in the constructor.
+     *
+     * @param color
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera primaryColor(@ColorInt int color) {
         mPrimaryColor = color;
         return this;
     }
 
+    /**
+     * The theme color used for the camera, defaults to colorPrimary of Activity in the constructor.
+     *
+     * @param colorRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
     public MaterialCamera primaryColorRes(@ColorRes int colorRes) {
         return primaryColor(ContextCompat.getColor(mContext, colorRes));
     }
@@ -185,6 +209,37 @@ public class MaterialCamera {
      */
     public MaterialCamera primaryColorAttr(@AttrRes int colorAttr) {
         return primaryColor(DialogUtils.resolveColor(mContext, colorAttr));
+    }
+
+    /**
+     * The theme color used for the icons and text, defaults to colorAccent of Activity in the constructor.
+     *
+     * @param color
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconTextColor(@ColorInt int color) {
+        mIconTextColor = color;
+        return this;
+    }
+
+    /**
+     * The theme color used for the icons and text, defaults to colorAccent of Activity in the constructor.
+     *
+     * @param colorRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconTextColorRes(@ColorRes int colorRes) {
+        return iconTextColor(ContextCompat.getColor(mContext, colorRes));
+    }
+
+    /**
+     * The theme color used for the icons and text, defaults to colorAccent of Activity in the constructor.
+     *
+     * @param colorAttr
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconTextColorAttr(@AttrRes int colorAttr) {
+        return iconTextColor(DialogUtils.resolveColor(mContext, colorAttr));
     }
 
     /**
@@ -346,6 +401,17 @@ public class MaterialCamera {
     }
 
     /**
+     * Sets a custom icon for the button used to take picture.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconCapture(@DrawableRes int iconRes) {
+        mIconCapture = iconRes;
+        return this;
+    }
+
+    /**
      * Sets a custom icon for the button used to start recording.
      *
      * @param iconRes
@@ -423,6 +489,61 @@ public class MaterialCamera {
     }
 
     /**
+     * Sets a custom icon used to pick image from gallery.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconPickFromGallery(@DrawableRes int iconRes) {
+        mIconPickFromGallery = iconRes;
+        return this;
+    }
+
+    /**
+     * Sets a custom icon used to exit MaterialCamera.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconNavigation(@DrawableRes int iconRes) {
+        mIconNavigation = iconRes;
+        return this;
+    }
+
+    /**
+     * Sets a custom icon used to flash mode auto.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconFlashAuto(@DrawableRes int iconRes) {
+        mIconFlashAuto = iconRes;
+        return this;
+    }
+
+    /**
+     * Sets a custom icon used to flash mode off.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconFlashOff(@DrawableRes int iconRes) {
+        mIconFlashOff = iconRes;
+        return this;
+    }
+
+    /**
+     * Sets a custom icon used to flash mode on.
+     *
+     * @param iconRes
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera iconFlashOn(@DrawableRes int iconRes) {
+        mIconFlashOn = iconRes;
+        return this;
+    }
+
+    /**
      * Sets a custom button label for the button used to retry recording, when available.
      *
      * @param stringRes
@@ -492,6 +613,28 @@ public class MaterialCamera {
         return this;
     }
 
+    /**
+     * Allows the user to pick media from device gallery.
+     *
+     * @param allowPickFromGallery
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera allowPickFromGallery(boolean allowPickFromGallery) {
+        mAllowPickFromGallery = allowPickFromGallery;
+        return this;
+    }
+
+    /**
+     * Shows the icon to exit MaterialCamera.
+     *
+     * @param show
+     * @return The {@link MaterialCamera} builder instance.
+     */
+    public MaterialCamera showNavigationIcon(boolean show) {
+        mShowNavigationIcon = show;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls =
                 !mForceCamera1 && CameraUtil.hasCamera2(mContext)
@@ -504,6 +647,7 @@ public class MaterialCamera {
                         .putExtra(CameraIntentKey.AUTO_SUBMIT, mAutoSubmit)
                         .putExtra(CameraIntentKey.SAVE_DIR, mSaveDir)
                         .putExtra(CameraIntentKey.PRIMARY_COLOR, mPrimaryColor)
+                        .putExtra(CameraIntentKey.ICON_TEXT_COLOR, mIconTextColor)
                         .putExtra(CameraIntentKey.ALLOW_CHANGE_CAMERA, mAllowChangeCamera)
                         .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
                         .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
@@ -512,7 +656,9 @@ public class MaterialCamera {
                         .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
                         .putExtra(CameraIntentKey.AUTO_RECORD, mAutoRecord)
                         .putExtra(CameraIntentKey.AUDIO_DISABLED, mAudioDisabled)
-                        .putExtra(CameraIntentKey.ALLOW_VIDEO_RECORDING, mAllowVideoRecording);
+                        .putExtra(CameraIntentKey.ALLOW_VIDEO_RECORDING, mAllowVideoRecording)
+                        .putExtra(CameraIntentKey.ALLOW_PICK_FROM_GALLERY, mAllowPickFromGallery)
+                        .putExtra(CameraIntentKey.SHOW_NAVIGATION_ICON, mShowNavigationIcon);
 
         if (mVideoEncodingBitRate > 0)
             intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoEncodingBitRate);
@@ -529,6 +675,8 @@ public class MaterialCamera {
         if (mQualityProfile > -1)
             intent.putExtra(CameraIntentKey.QUALITY_PROFILE, mQualityProfile);
 
+        if (mIconCapture != 0)
+            intent.putExtra(CameraIntentKey.ICON_CAPTURE, mIconCapture);
         if (mIconRecord != 0)
             intent.putExtra(CameraIntentKey.ICON_RECORD, mIconRecord);
         if (mIconStop != 0)
@@ -543,6 +691,16 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.ICON_PAUSE, mIconPause);
         if (mIconRestart != 0)
             intent.putExtra(CameraIntentKey.ICON_RESTART, mIconRestart);
+        if (mIconPickFromGallery != 0)
+            intent.putExtra(CameraIntentKey.ICON_PICK_FROM_GALLERY, mIconPickFromGallery);
+        if (mIconNavigation != 0)
+            intent.putExtra(CameraIntentKey.ICON_NAVIGATION, mIconNavigation);
+        if (mIconFlashAuto != 0)
+            intent.putExtra(CameraIntentKey.ICON_FLASH_AUTO, mIconFlashAuto);
+        if (mIconFlashOff != 0)
+            intent.putExtra(CameraIntentKey.ICON_FLASH_OFF, mIconFlashOff);
+        if (mIconFlashOn != 0)
+            intent.putExtra(CameraIntentKey.ICON_FLASH_ON, mIconFlashOn);
         if (mLabelRetry != 0)
             intent.putExtra(CameraIntentKey.LABEL_RETRY, mLabelRetry);
         if (mLabelConfirm != 0)

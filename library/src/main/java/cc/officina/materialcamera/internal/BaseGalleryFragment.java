@@ -20,19 +20,19 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 
-import cc.officina.materialcamera.R;
-import cc.officina.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
+
+import cc.officina.materialcamera.R;
 
 public abstract class BaseGalleryFragment extends Fragment
         implements CameraUriInterface, View.OnClickListener {
 
     BaseCaptureInterface mInterface;
     int mPrimaryColor;
+    int mIconTextColor;
     String mOutputUri;
     View mControlsFrame;
     Button mRetry;
@@ -61,17 +61,11 @@ public abstract class BaseGalleryFragment extends Fragment
         mConfirm = (Button) view.findViewById(R.id.confirm);
 
         mPrimaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
-        if (CameraUtil.isColorDark(mPrimaryColor)) {
-            mPrimaryColor = CameraUtil.darkenColor(mPrimaryColor);
-            final int textColor = ContextCompat.getColor(view.getContext(), R.color.mcam_color_light);
-            mRetry.setTextColor(textColor);
-            mConfirm.setTextColor(textColor);
-        } else {
-            final int textColor = ContextCompat.getColor(view.getContext(), R.color.mcam_color_dark);
-            mRetry.setTextColor(textColor);
-            mConfirm.setTextColor(textColor);
-        }
+        mIconTextColor = getArguments().getInt(CameraIntentKey.ICON_TEXT_COLOR);
+
         mControlsFrame.setBackgroundColor(mPrimaryColor);
+        mRetry.setTextColor(mIconTextColor);
+        mConfirm.setTextColor(mIconTextColor);
 
         mRetry.setVisibility(
                 getArguments().getBoolean(CameraIntentKey.ALLOW_RETRY, true) ? View.VISIBLE : View.GONE);

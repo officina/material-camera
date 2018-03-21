@@ -41,18 +41,19 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import cc.officina.materialcamera.MaterialCamera;
-import cc.officina.materialcamera.R;
-import cc.officina.materialcamera.TimeLimitReachedException;
-import cc.officina.materialcamera.util.CameraUtil;
-import cc.officina.materialcamera.util.FilenameUtils;
-import cc.officina.materialcamera.util.MimeUtils;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
+
+import cc.officina.materialcamera.MaterialCamera;
+import cc.officina.materialcamera.R;
+import cc.officina.materialcamera.TimeLimitReachedException;
+import cc.officina.materialcamera.util.CameraUtil;
+import cc.officina.materialcamera.util.FilenameUtils;
+import cc.officina.materialcamera.util.MimeUtils;
 
 public abstract class BaseCaptureActivity extends AppCompatActivity
         implements BaseCaptureInterface {
@@ -578,17 +579,10 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
                         CameraIntentKey.LABEL_CONFIRM, R.string.mcam_use_video);
     }
 
-    @DrawableRes
-    @Override
-    public int iconStillshot() {
-        return getIntent()
-                .getIntExtra(CameraIntentKey.ICON_STILL_SHOT, R.drawable.mcam_action_stillshot);
-    }
-
     @Override
     public int iconCapture() {
         return getIntent()
-                .getIntExtra(CameraIntentKey.ICON_STILL_SHOT, R.drawable.mcam_action_capture);
+                .getIntExtra(CameraIntentKey.ICON_CAPTURE, R.drawable.mcam_action_capture);
     }
 
     @DrawableRes
@@ -609,6 +603,23 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     public int iconFlashOff() {
         return getIntent()
                 .getIntExtra(CameraIntentKey.ICON_FLASH_OFF, R.drawable.mcam_action_flash_off);
+    }
+
+    @Override
+    public int iconPickFromGallery() {
+        return getIntent()
+                .getIntExtra(CameraIntentKey.ICON_PICK_FROM_GALLERY, R.drawable.mcam_action_pick_from_gallery);
+    }
+
+    @Override
+    public int iconNavigation() {
+        return getIntent()
+                .getIntExtra(CameraIntentKey.ICON_NAVIGATION, R.drawable.mcam_action_navigation);
+    }
+
+    @Override
+    public boolean shouldShowNavigationIcon() {
+        return getIntent().getBooleanExtra(CameraIntentKey.SHOW_NAVIGATION_ICON, false);
     }
 
     @Override
@@ -641,13 +652,22 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         mRequestingPickFromGallery = true;
 
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/* video/*");
+        if (allowVideoRecording()) {
+            intent.setType("image/* video/*");
+        } else {
+            intent.setType("image/*");
+        }
         ActivityCompat.startActivityForResult(this, intent, BaseCaptureActivity.REQUEST_CODE_PICK_FROM_GALLERY, null);
     }
 
     @Override
     public boolean allowVideoRecording() {
         return getIntent().getBooleanExtra(CameraIntentKey.ALLOW_VIDEO_RECORDING, false);
+    }
+
+    @Override
+    public boolean allowPickFromGallery() {
+        return getIntent().getBooleanExtra(CameraIntentKey.ALLOW_PICK_FROM_GALLERY, false);
     }
 
     @IntDef({CAMERA_POSITION_UNKNOWN, CAMERA_POSITION_BACK, CAMERA_POSITION_FRONT})

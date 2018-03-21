@@ -16,6 +16,7 @@
 
 package cc.officina.materialcamera.internal;
 
+import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -121,17 +122,6 @@ public interface BaseCaptureInterface {
     int labelConfirm();
 
     @DrawableRes
-    int iconStillshot();
-
-    @DrawableRes
-    int iconCapture();
-
-    void toggleFlashMode();
-
-    @BaseCaptureActivity.FlashMode
-    int getFlashMode();
-
-    @DrawableRes
     int iconFlashAuto();
 
     @DrawableRes
@@ -139,6 +129,22 @@ public interface BaseCaptureInterface {
 
     @DrawableRes
     int iconFlashOff();
+
+    @DrawableRes
+    int iconCapture();
+
+    @DrawableRes
+    int iconPickFromGallery();
+
+    @DrawableRes
+    int iconNavigation();
+
+    boolean shouldShowNavigationIcon();
+
+    void toggleFlashMode();
+
+    @BaseCaptureActivity.FlashMode
+    int getFlashMode();
 
     void setFlashModes(List<Integer> modes);
 
@@ -153,4 +159,6 @@ public interface BaseCaptureInterface {
     void pickFromGallery();
 
     boolean allowVideoRecording();
+
+    boolean allowPickFromGallery();
 }
