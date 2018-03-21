@@ -40,6 +40,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -54,6 +55,9 @@ import static android.app.Activity.RESULT_CANCELED;
 
 abstract class BaseCameraFragment extends Fragment
         implements CameraUriInterface, View.OnClickListener, View.OnTouchListener {
+
+    protected ViewGroup mPreviewFrame;
+    protected ViewGroup mControlsFrame;
 
     protected ImageButton mButtonStillshot;
     protected ImageButton mButtonFacing;
@@ -135,6 +139,8 @@ abstract class BaseCameraFragment extends Fragment
         mPrimaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         mIconTextColor = getArguments().getInt(CameraIntentKey.ICON_TEXT_COLOR);
 
+        mPreviewFrame = (RelativeLayout) view.findViewById(R.id.rootFrame);
+
         mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
         mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
@@ -167,7 +173,8 @@ abstract class BaseCameraFragment extends Fragment
         mButtonPickFromGallery.setOnClickListener(this);
         mButtonNavigation.setOnClickListener(this);
 
-        view.findViewById(R.id.controlsFrame).setBackgroundColor(mPrimaryColor);
+        mControlsFrame = view.findViewById(R.id.controlsFrame);
+        mControlsFrame.setBackgroundColor(mPrimaryColor);
         mRecordDuration.setBackgroundColor(mPrimaryColor);
 
         if (mMediaRecorder != null && mIsRecording) {

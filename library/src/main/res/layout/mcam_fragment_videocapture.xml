@@ -26,17 +26,21 @@
     <include
         layout="@layout/mcam_include_camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:layout_height="300dp"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/recordDuration"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:background="@android:color/black"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
         android:minHeight="@dimen/mcam_action_icon_size_smaller"
+        android:paddingBottom="@dimen/mcam_content_inset"
+        android:paddingLeft="@dimen/mcam_content_inset_less"
+        android:paddingRight="@dimen/mcam_content_inset_less"
+        android:paddingTop="@dimen/mcam_content_inset"
         android:text="@string/mcam_defaultDuration"
         android:textColor="#A0020E"
         android:textSize="@dimen/mcam_regular_content_fontsize"/>
@@ -44,9 +48,8 @@
     <RelativeLayout
         android:id="@+id/controlsFrame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/texture"
         android:background="?colorPrimaryDark"
         android:elevation="@dimen/mcam_toolbar_elevation"
         android:minHeight="@dimen/mcam_toolbar_min_height"

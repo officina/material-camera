@@ -51,7 +51,6 @@ import java.util.List;
 public class CameraFragment extends BaseCameraFragment implements View.OnClickListener {
 
     CameraPreview mPreviewView;
-    RelativeLayout mPreviewFrame;
     List<Integer> mFlashModes;
     private Camera.Size mVideoSize;
     private Camera mCamera;
@@ -124,7 +123,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPreviewFrame = (RelativeLayout) view.findViewById(R.id.rootFrame);
         mPreviewFrame.setOnClickListener(this);
     }
 

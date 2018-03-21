@@ -57,6 +57,8 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -768,6 +770,8 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
             }
 
+            adjustControlFrame(orientation);
+
             mAfAvailable = false;
             int[] afModes = characteristics.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
             if (afModes != null) {
@@ -795,6 +799,47 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         } catch (InterruptedException e) {
             throwError(new Exception("Interrupted while trying to lock camera opening.", e));
         }
+    }
+
+    private void adjustControlFrame(final int screenOrientation) {
+        mControlsFrame.setAlpha(0f);
+        mTextureView.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mPreviewFrame == null || mTextureView == null || mControlsFrame == null) {
+                    return;
+                }
+
+                if(screenOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                        || screenOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                    int rootViewWidth = mPreviewFrame.getWidth();
+                    int cameraPreviewWidth = mTextureView.getWidth();
+                    int availableSpace = rootViewWidth - cameraPreviewWidth;
+
+                    if (availableSpace > mControlsFrame.getWidth()) {
+                        final ViewGroup.LayoutParams layoutParams = mControlsFrame.getLayoutParams();
+                        layoutParams.width = availableSpace;
+                        mControlsFrame.setLayoutParams(layoutParams);
+                    }
+                } else {
+                    int rootViewHeight = mPreviewFrame.getHeight();
+                    int cameraPreviewHeight = mTextureView.getHeight();
+                    int availableSpace = rootViewHeight - cameraPreviewHeight;
+
+                    if (availableSpace > mControlsFrame.getHeight()) {
+                        final ViewGroup.LayoutParams layoutParams = mControlsFrame.getLayoutParams();
+                        layoutParams.height = availableSpace;
+                        mControlsFrame.setLayoutParams(layoutParams);
+                    }
+                }
+
+                mControlsFrame.animate()
+                        .alpha(1f)
+                        .setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime))
+                        .setInterpolator(new AccelerateDecelerateInterpolator())
+                        .start();
+            }
+        });
     }
 
     @Override
