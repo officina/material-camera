@@ -28,8 +28,6 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import cc.officina.materialcamera.internal.BaseCaptureActivity;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +35,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import cc.officina.materialcamera.internal.BaseCaptureActivity;
 
 public class CameraUtil {
 
@@ -155,8 +155,8 @@ public class CameraUtil {
             return false;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
             return false;
-        if (ManufacturerUtil.isSamsungDevice())
-            return false;
+        //if (ManufacturerUtil.isSamsungDevice())
+        //    return false;
         try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
             String[] idList = manager.getCameraIdList();
@@ -173,7 +173,8 @@ public class CameraUtil {
                     //noinspection ConstantConditions
                     final int supportLevel =
                             characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-                    if (supportLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
+                    if (supportLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY
+                            || supportLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED) {
                         notNull = false;
                         break;
                     }

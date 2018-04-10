@@ -304,7 +304,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             if (size.getHeight() <= ci.videoPreferredHeight()) {
 
                 // from here we can choose a valid size
-                final float preferredWidth = size.getHeight() * ci.videoPreferredAspect();
+                final int preferredWidth = (int) (size.getHeight() * ci.videoPreferredAspect());
                 if (size.getWidth() == preferredWidth) {
                     // exact resolution: return immediate
                     return size;
@@ -404,7 +404,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
             LOG(Camera2Fragment.class, "Couldn't find any suitable preview size");
-            return choices[0];
+            return choices.length > 0 ? choices[0] : aspectRatio;
         }
     }
 

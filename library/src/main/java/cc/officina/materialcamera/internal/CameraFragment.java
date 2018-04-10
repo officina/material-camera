@@ -30,8 +30,13 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import cc.officina.materialcamera.ICallback;
 import cc.officina.materialcamera.R;
@@ -39,12 +44,6 @@ import cc.officina.materialcamera.util.CameraUtil;
 import cc.officina.materialcamera.util.Degrees;
 import cc.officina.materialcamera.util.ImageUtil;
 import cc.officina.materialcamera.util.ManufacturerUtil;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 @SuppressWarnings("deprecation")
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -70,7 +69,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             if (size.height <= ci.videoPreferredHeight()) {
 
                 // from here we can choose a valid size
-                final float preferredWidth = size.height * ci.videoPreferredAspect();
+                final int preferredWidth = (int) (size.height * ci.videoPreferredAspect());
                 if (size.width == preferredWidth) {
                     // exact resolution: return immediate
                     return size;
@@ -103,20 +102,29 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             List<Camera.Size> choices, int width, int height, Camera.Size aspectRatio) {
         // Collect the supported resolutions that are at least as big as the preview Surface
         List<Camera.Size> bigEnough = new ArrayList<>();
+        // Collect the supported resolutions that are smaller than the preview Surface
+        List<Camera.Size> notBigEnough = new ArrayList<>();
         int w = aspectRatio.width;
         int h = aspectRatio.height;
         for (Camera.Size option : choices) {
-            if (option.height == width * h / w && option.width >= width && option.height >= height) {
+            if (option.width >= width
+                    && option.height >= height
+                    && option.height == option.width * h / w) {
                 bigEnough.add(option);
+            } else {
+                notBigEnough.add(option);
             }
         }
 
-        // Pick the smallest of those, assuming we found any
+        // Pick the smallest of those big enough. If there is no one big enough, pick the
+        // largest of those not big enough.
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
+        } else if (notBigEnough.size() > 0) {
+            return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
-            LOG(CameraFragment.class, "Couldn't find any suitable preview size");
-            return aspectRatio;
+            LOG(Camera2Fragment.class, "Couldn't find any suitable preview size");
+            return choices.size() > 0 ? choices.get(0) : aspectRatio;
         }
     }
 
@@ -387,7 +395,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             boolean allowVideoRecording = mInterface.allowVideoRecording();
             boolean canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
             boolean audioEnabled = !mInterface.audioDisabled();
-            if(allowVideoRecording) {
+            if (allowVideoRecording) {
                 if (canUseAudio && audioEnabled) {
                     mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
                 } else if (audioEnabled) {
