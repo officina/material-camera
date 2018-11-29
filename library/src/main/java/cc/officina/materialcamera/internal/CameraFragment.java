@@ -472,7 +472,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 // UI
                 //setImageRes(mButtonVideo, mInterface.iconStop());
                 if (!CameraUtil.isChromium())
-                    mButtonFacing.setVisibility(View.GONE);
+                    mButtonFacing.setVisibility(View.INVISIBLE);
 
                 // Only start counter if count down wasn't already started
                 if (!mInterface.hasLengthLimit()) {
@@ -577,51 +577,53 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
     @Override
     public void takeStillshot() {
-        Camera.ShutterCallback shutterCallback =
-                new Camera.ShutterCallback() {
-                    public void onShutter() {
-                        //Log.d(TAG, "onShutter'd");
-                    }
-                };
-        Camera.PictureCallback rawCallback =
-                new Camera.PictureCallback() {
-                    public void onPictureTaken(byte[] data, Camera camera) {
-                        //Log.d(TAG, "onPictureTaken - raw. Raw is null: " + (data == null));
-                    }
-                };
-        Camera.PictureCallback jpegCallback =
-                new Camera.PictureCallback() {
-                    public void onPictureTaken(final byte[] data, Camera camera) {
-                        //Log.d(TAG, "onPictureTaken - jpeg, size: " + data.length);
-                        final File outputPic = getOutputPictureFile();
-                        // lets save the image to disk
-                        ImageUtil.saveToDiskAsync(
-                                data,
-                                outputPic,
-                                new ICallback() {
-                                    @Override
-                                    public void done(Exception e) {
-                                        if (e == null) {
-                                            Log.d("CameraFragment", "Picture saved to disk - jpeg, size: " + data.length);
-                                            mPictureOutputUri = Uri.fromFile(outputPic).toString();
-                                            mInterface.onShowStillshot(mPictureOutputUri);
-                                            //mCamera.startPreview();
-                                            mButtonStillshot.setEnabled(true);
-                                        } else {
-                                            throwError(e);
+        if (mCamera != null){
+            Camera.ShutterCallback shutterCallback =
+                    new Camera.ShutterCallback() {
+                        public void onShutter() {
+                            //Log.d(TAG, "onShutter'd");
+                        }
+                    };
+            Camera.PictureCallback rawCallback =
+                    new Camera.PictureCallback() {
+                        public void onPictureTaken(byte[] data, Camera camera) {
+                            //Log.d(TAG, "onPictureTaken - raw. Raw is null: " + (data == null));
+                        }
+                    };
+            Camera.PictureCallback jpegCallback =
+                    new Camera.PictureCallback() {
+                        public void onPictureTaken(final byte[] data, Camera camera) {
+                            //Log.d(TAG, "onPictureTaken - jpeg, size: " + data.length);
+                            final File outputPic = getOutputPictureFile();
+                            // lets save the image to disk
+                            ImageUtil.saveToDiskAsync(
+                                    data,
+                                    outputPic,
+                                    new ICallback() {
+                                        @Override
+                                        public void done(Exception e) {
+                                            if (e == null) {
+                                                Log.d("CameraFragment", "Picture saved to disk - jpeg, size: " + data.length);
+                                                mPictureOutputUri = Uri.fromFile(outputPic).toString();
+                                                mInterface.onShowStillshot(mPictureOutputUri);
+                                                //mCamera.startPreview();
+                                                mButtonStillshot.setEnabled(true);
+                                            } else {
+                                                throwError(e);
+                                            }
                                         }
-                                    }
-                                });
-                    }
-                };
+                                    });
+                        }
+                    };
 
-        //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        //            // We could have configurable shutter sound here
-        //            mCamera.enableShutterSound(false);
-        //        }
+            //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //            // We could have configurable shutter sound here
+            //            mCamera.enableShutterSound(false);
+            //        }
 
-        mButtonStillshot.setEnabled(false);
-        mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
+            mButtonStillshot.setEnabled(false);
+            mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
+        }
     }
 
     static class CompareSizesByArea implements Comparator<Camera.Size> {

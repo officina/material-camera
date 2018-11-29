@@ -415,6 +415,9 @@ abstract class BaseCameraFragment extends Fragment
     public void stopRecordingVideo(boolean reachedZero) {
         mButtonStillshot.setImageResource(mInterface.iconCapture());
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        if (mButtonStillshot != null){
+            mButtonStillshot.setOnTouchListener(null);
+        }
     }
 
     @Override

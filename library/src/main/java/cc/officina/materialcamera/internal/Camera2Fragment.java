@@ -1148,7 +1148,9 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
      *     https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
      */
     public void takeStillshot() {
-        lockFocus();
+        if (mCameraDevice != null){
+            lockFocus();
+        }
     }
 
     private void lockFocus() {
