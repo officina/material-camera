@@ -23,6 +23,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.media.MediaRecorder;
@@ -31,6 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
@@ -41,6 +44,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -64,8 +68,9 @@ abstract class BaseCameraFragment extends Fragment
     protected ImageButton mButtonFlash;
     protected ImageButton mButtonPickFromGallery;
     protected ImageButton mButtonNavigation;
-    protected TextView mRecordDuration;
+    protected SeekBar mRecordDurationBar;
     protected TextView mDelayStartCountdown;
+    protected TextView mRecordDurationTv;
     protected String mPictureOutputUri;
     protected String mVideoOutputUri;
     protected BaseCaptureInterface mInterface;
@@ -78,7 +83,7 @@ abstract class BaseCameraFragment extends Fragment
             new Runnable() {
                 @Override
                 public void run() {
-                    if (mInterface == null || mRecordDuration == null)
+                    if (mInterface == null || mRecordDurationBar == null)
                         return;
                     final long mRecordStart = mInterface.getRecordingStart();
                     final long mRecordEnd = mInterface.getRecordingEnd();
@@ -89,11 +94,17 @@ abstract class BaseCameraFragment extends Fragment
                         if (now >= mRecordEnd) {
                             stopRecordingVideo(true);
                         } else {
-                            final long diff = mRecordEnd - now;
-                            mRecordDuration.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
+                            final long diff = now - mRecordStart;
+                            int percentage = (int)((diff * 100)/mInterface.getLengthLimit());
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                mRecordDurationBar.setProgress(percentage, true);
+                            } else {
+                                mRecordDurationBar.setProgress(percentage);
+                            }
                         }
                     } else {
-                        mRecordDuration.setText(CameraUtil.getDurationString(now - mRecordStart));
+                        mRecordDurationBar.setVisibility(View.GONE);
+                        mRecordDurationTv.setText(CameraUtil.getDurationString(now - mRecordStart));
                     }
                     if (mPositionHandler != null)
                         mPositionHandler.postDelayed(this, 1000);
@@ -143,7 +154,8 @@ abstract class BaseCameraFragment extends Fragment
 
         mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
         mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
-        mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
+        mRecordDurationTv = (TextView) view.findViewById(R.id.recordDuration);
+        mRecordDurationBar = (SeekBar) view.findViewById(R.id.recordDurationBar);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
         if (mInterface.shouldHideCameraFacing() || CameraUtil.isChromium()) {
             mButtonFacing.setVisibility(View.GONE);
@@ -175,7 +187,7 @@ abstract class BaseCameraFragment extends Fragment
 
         mControlsFrame = view.findViewById(R.id.controlsFrame);
         mControlsFrame.setBackgroundColor(mPrimaryColor);
-        mRecordDuration.setBackgroundColor(mPrimaryColor);
+        //mRecordDurationTv.setBackgroundColor(mPrimaryColor);
 
         if (mMediaRecorder != null && mIsRecording) {
             //setImageRes(mButtonVideo, mInterface.iconStop());
@@ -188,8 +200,9 @@ abstract class BaseCameraFragment extends Fragment
             mPictureOutputUri = savedInstanceState.getString("picture_output_uri");
             mVideoOutputUri = savedInstanceState.getString("video_output_uri");
         }
-
-        mRecordDuration.setVisibility(View.GONE);
+        mRecordDurationBar.getProgressDrawable().setColorFilter(Color.parseColor("#00fdc7"), PorterDuff.Mode.SRC_IN);
+        mRecordDurationTv.setVisibility(View.GONE);
+        mRecordDurationBar.setVisibility(View.GONE);
         mButtonStillshot.setVisibility(View.VISIBLE);
         mButtonStillshot.setImageResource(mInterface.iconCapture());
         mButtonFlash.setVisibility(View.VISIBLE);
@@ -280,7 +293,8 @@ abstract class BaseCameraFragment extends Fragment
         mButtonStillshot = null;
         mButtonFacing = null;
         mButtonFlash = null;
-        mRecordDuration = null;
+        mRecordDurationTv = null;
+        mRecordDurationBar = null;
         mButtonPickFromGallery = null;
         mButtonNavigation = null;
     }
@@ -294,8 +308,8 @@ abstract class BaseCameraFragment extends Fragment
                     mInterface.setRecordingStart(System.currentTimeMillis());
                 startCounter();
             } else {
-                mRecordDuration.setText(
-                        String.format("-%s", CameraUtil.getDurationString(mInterface.getLengthLimit())));
+                mRecordDurationBar.setProgress(0);
+                mRecordDurationTv.setText(CameraUtil.getDurationString(mInterface.getLengthLimit()));
             }
         }
     }
@@ -477,7 +491,9 @@ abstract class BaseCameraFragment extends Fragment
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mRecordDuration.setVisibility(View.VISIBLE);
+                        mRecordDurationTv.setVisibility(View.VISIBLE);
+                        mRecordDurationTv.setText(String.format("%d\"", mInterface.getLengthLimit()/1000));
+                        mRecordDurationBar.setVisibility(View.VISIBLE);
                         mIsRecording = startRecordingVideo();
                     }
                 });
@@ -515,7 +531,8 @@ abstract class BaseCameraFragment extends Fragment
                     stopTimer();
 
                     if (mIsRecording) {
-                        mRecordDuration.setVisibility(View.GONE);
+                        mRecordDurationTv.setVisibility(View.GONE);
+                        mRecordDurationBar.setVisibility(View.GONE);
                         stopRecordingVideo(false);
                         mIsRecording = false;
                     } else {

@@ -36,7 +36,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/black"
         android:elevation="@dimen/mcam_toolbar_elevation"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
@@ -47,9 +46,26 @@
         android:paddingRight="@dimen/mcam_content_inset_less"
         android:paddingTop="@dimen/mcam_content_inset"
         android:text="@string/mcam_defaultDuration"
-        android:textColor="#A0020E"
+        android:textColor="#00fdc7"
         android:textSize="@dimen/mcam_regular_content_fontsize"/>
 
+    <SeekBar
+        android:id="@+id/recordDurationBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="64dp"
+        android:layout_marginRight="64dp"
+        android:layout_toEndOf="@+id/navigation"
+        android:layout_toLeftOf="@+id/controlsFrame"
+        android:layout_toRightOf="@+id/navigation"
+        android:layout_toStartOf="@+id/controlsFrame"
+        android:thumb="@android:color/transparent"
+        android:max="100"
+        android:minHeight="@dimen/mcam_action_icon_size_smaller"
+        android:paddingBottom="@dimen/mcam_content_inset"
+        android:paddingLeft="@dimen/mcam_content_inset_less"
+        android:paddingRight="@dimen/mcam_content_inset_less"
+        android:paddingTop="@dimen/mcam_content_inset"/>
     <RelativeLayout
         android:id="@+id/controlsFrame"
         android:layout_width="wrap_content"
