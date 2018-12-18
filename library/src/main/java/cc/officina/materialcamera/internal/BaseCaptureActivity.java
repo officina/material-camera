@@ -679,4 +679,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     @Retention(RetentionPolicy.SOURCE)
     public @interface FlashMode {
     }
+
+    @Override
+    public String recordTooltipString() {
+        return getIntent().getStringExtra(CameraIntentKey.TOOLTIP_STRING);
+    }
 }

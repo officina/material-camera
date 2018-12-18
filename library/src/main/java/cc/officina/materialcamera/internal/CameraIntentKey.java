@@ -57,6 +57,7 @@ public class CameraIntentKey {
     public static final String ICON_PICK_FROM_GALLERY = "icon_pick_from_gallery";
     public static final String ICON_NAVIGATION = "icon_navigation";
     public static final String SHOW_NAVIGATION_ICON = "show_navigation_icon";
+    public static final String TOOLTIP_STRING = "tooltip_string";
 
     private CameraIntentKey() {
     }

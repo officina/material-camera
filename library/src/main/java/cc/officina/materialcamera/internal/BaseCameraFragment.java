@@ -71,6 +71,7 @@ abstract class BaseCameraFragment extends Fragment
     protected SeekBar mRecordDurationBar;
     protected TextView mDelayStartCountdown;
     protected TextView mRecordDurationTv;
+    protected TextView mRecordButtonTooltip;
     protected String mPictureOutputUri;
     protected String mVideoOutputUri;
     protected BaseCaptureInterface mInterface;
@@ -104,6 +105,7 @@ abstract class BaseCameraFragment extends Fragment
                         }
                     } else {
                         mRecordDurationBar.setVisibility(View.GONE);
+                        mRecordButtonTooltip.setVisibility(View.GONE);
                         mRecordDurationTv.setText(CameraUtil.getDurationString(now - mRecordStart));
                     }
                     if (mPositionHandler != null)
@@ -157,6 +159,7 @@ abstract class BaseCameraFragment extends Fragment
         mRecordDurationTv = (TextView) view.findViewById(R.id.recordDuration);
         mRecordDurationBar = (SeekBar) view.findViewById(R.id.recordDurationBar);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
+        mRecordButtonTooltip = (TextView) view.findViewById(R.id.buttonRecordTooltip);
         if (mInterface.shouldHideCameraFacing() || CameraUtil.isChromium()) {
             mButtonFacing.setVisibility(View.GONE);
         } else {
@@ -201,8 +204,17 @@ abstract class BaseCameraFragment extends Fragment
             mVideoOutputUri = savedInstanceState.getString("video_output_uri");
         }
         mRecordDurationBar.getProgressDrawable().setColorFilter(Color.parseColor("#00fdc7"), PorterDuff.Mode.SRC_IN);
+        mRecordDurationBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#00fdc7")));
         mRecordDurationTv.setVisibility(View.GONE);
         mRecordDurationBar.setVisibility(View.GONE);
+        if (mInterface.allowVideoRecording()){
+            mRecordButtonTooltip.setVisibility(View.VISIBLE);
+            mRecordButtonTooltip.setText(mInterface.recordTooltipString());
+        } else {
+            mRecordButtonTooltip.setVisibility(View.GONE);
+        }
+
+
         mButtonStillshot.setVisibility(View.VISIBLE);
         mButtonStillshot.setImageResource(mInterface.iconCapture());
         mButtonFlash.setVisibility(View.VISIBLE);
@@ -295,6 +307,7 @@ abstract class BaseCameraFragment extends Fragment
         mButtonFlash = null;
         mRecordDurationTv = null;
         mRecordDurationBar = null;
+        mRecordButtonTooltip = null;
         mButtonPickFromGallery = null;
         mButtonNavigation = null;
     }
@@ -494,6 +507,7 @@ abstract class BaseCameraFragment extends Fragment
                         mRecordDurationTv.setVisibility(View.VISIBLE);
                         mRecordDurationTv.setText(String.format("%d\"", mInterface.getLengthLimit()/1000));
                         mRecordDurationBar.setVisibility(View.VISIBLE);
+                        mRecordButtonTooltip.setVisibility(View.GONE);
                         mIsRecording = startRecordingVideo();
                     }
                 });
@@ -533,6 +547,7 @@ abstract class BaseCameraFragment extends Fragment
                     if (mIsRecording) {
                         mRecordDurationTv.setVisibility(View.GONE);
                         mRecordDurationBar.setVisibility(View.GONE);
+                        mRecordButtonTooltip.setVisibility(View.VISIBLE);
                         stopRecordingVideo(false);
                         mIsRecording = false;
                     } else {

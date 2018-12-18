@@ -98,6 +98,7 @@ public class MaterialCamera {
     private boolean mAllowVideoRecording;
     private boolean mAllowPickFromGallery;
     private boolean mShowNavigationIcon;
+    private String mTooltipString;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -635,6 +636,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera videoTooltipString(String tooltipString){
+        mTooltipString = tooltipString;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls =
                 !mForceCamera1 && CameraUtil.hasCamera2(mContext)
@@ -658,7 +664,8 @@ public class MaterialCamera {
                         .putExtra(CameraIntentKey.AUDIO_DISABLED, mAudioDisabled)
                         .putExtra(CameraIntentKey.ALLOW_VIDEO_RECORDING, mAllowVideoRecording)
                         .putExtra(CameraIntentKey.ALLOW_PICK_FROM_GALLERY, mAllowPickFromGallery)
-                        .putExtra(CameraIntentKey.SHOW_NAVIGATION_ICON, mShowNavigationIcon);
+                        .putExtra(CameraIntentKey.SHOW_NAVIGATION_ICON, mShowNavigationIcon)
+                        .putExtra(CameraIntentKey.TOOLTIP_STRING, mTooltipString);
 
         if (mVideoEncodingBitRate > 0)
             intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoEncodingBitRate);

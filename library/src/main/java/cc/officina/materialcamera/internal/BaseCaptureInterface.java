@@ -161,4 +161,6 @@ public interface BaseCaptureInterface {
     boolean allowVideoRecording();
 
     boolean allowPickFromGallery();
+
+    String recordTooltipString();
 }
