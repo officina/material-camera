@@ -160,28 +160,32 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.rootFrame) {
-            if (mCamera == null || mIsAutoFocusing)
-                return;
-            try {
-                mIsAutoFocusing = true;
-                mCamera.cancelAutoFocus();
-                mCamera.autoFocus(
-                        new Camera.AutoFocusCallback() {
-                            @Override
-                            public void onAutoFocus(boolean success, Camera camera) {
-                                mIsAutoFocusing = false;
-                                if (!success)
-                                    Toast.makeText(getActivity(), "Unable to auto-focus!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            autoFocus();
         } else {
             super.onClick(view);
         }
     }
-
+    private void autoFocus(){
+        if (mCamera == null || mIsAutoFocusing)
+            return;
+        try {
+            if (mIsAutoFocusing) {
+                mCamera.cancelAutoFocus();
+            }
+            mIsAutoFocusing = true;
+            mCamera.autoFocus(
+                    new Camera.AutoFocusCallback() {
+                        @Override
+                        public void onAutoFocus(boolean success, Camera camera) {
+                            mIsAutoFocusing = false;
+                            if (!success)
+                                Toast.makeText(getActivity(), "Unable to auto-focus!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
     @Override
     public void openCamera() {
         final Activity activity = getActivity();
@@ -290,7 +294,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             createPreview();
             mMediaRecorder = new MediaRecorder();
-
             onCameraOpened();
         } catch (IllegalStateException e) {
             throwError(new Exception("Cannot access the camera.", e));
@@ -479,10 +482,9 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                     mInterface.setRecordingStart(System.currentTimeMillis());
                     startCounter();
                 }
-
                 // Start recording
                 mMediaRecorder.start();
-
+                autoFocus();
         /*mButtonVideo.setEnabled(false);
         mButtonVideo.postDelayed(
             new Runnable() {
@@ -622,6 +624,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             //        }
 
             mButtonStillshot.setEnabled(false);
+            autoFocus();
             mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
         }
     }
