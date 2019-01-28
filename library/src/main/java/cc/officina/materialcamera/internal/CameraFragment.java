@@ -284,6 +284,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);
 
             setCameraDisplayOrientation(parameters);
+
             mCamera.setParameters(parameters);
 
             // NOTE: onFlashModesLoaded should not be called while modifying camera parameters as
@@ -319,6 +320,17 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         return maxSize;
     }
 
+    private void setCameraFocusMode(Camera.Parameters parameters, boolean isVideo){
+        if (parameters == null || mCamera == null){
+            return;
+        }
+        if (isVideo) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        } else {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        }
+        mCamera.setParameters(parameters);
+    }
     @SuppressWarnings("WrongConstant")
     private void setCameraDisplayOrientation(Camera.Parameters parameters) {
         Camera.CameraInfo info = new Camera.CameraInfo();
@@ -388,8 +400,9 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             if (null == activity)
                 return false;
             final BaseCaptureInterface captureInterface = (BaseCaptureInterface) activity;
-
-            setCameraDisplayOrientation(mCamera.getParameters());
+            Camera.Parameters parameters = mCamera.getParameters();
+            setCameraDisplayOrientation(parameters);
+            setCameraFocusMode(parameters, true);
             mMediaRecorder = new MediaRecorder();
             mCamera.stopPreview();
             mCamera.unlock();
@@ -484,7 +497,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 }
                 // Start recording
                 mMediaRecorder.start();
-                autoFocus();
         /*mButtonVideo.setEnabled(false);
         mButtonVideo.postDelayed(
             new Runnable() {
@@ -624,7 +636,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             //        }
 
             mButtonStillshot.setEnabled(false);
-            autoFocus();
+            setCameraFocusMode(mCamera.getParameters(), false);
             mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
         }
     }
