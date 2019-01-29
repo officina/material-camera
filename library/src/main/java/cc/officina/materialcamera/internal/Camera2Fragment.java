@@ -1271,7 +1271,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
     private void setFlashMode(CaptureRequest.Builder requestBuilder) {
         mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-
         int aeMode;
         int flashMode;
         switch (mInterface.getFlashMode()) {
@@ -1290,7 +1289,11 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 break;
         }
 
-        requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, aeMode);
+        if (!mInterface.didRecord()){
+            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, aeMode);
+        } else {
+            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+        }
         requestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
     }
 

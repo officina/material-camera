@@ -467,7 +467,12 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
     @Override
     public void toggleFlashMode() {
         if (mFlashModes != null) {
+
             mFlashMode = mFlashModes.get((mFlashModes.indexOf(mFlashMode) + 1) % mFlashModes.size());
+            if (didRecord() && mFlashMode == BaseCaptureActivity.FLASH_MODE_AUTO){
+                //if recording skip autoflash
+                mFlashMode = mFlashModes.get((mFlashModes.indexOf(mFlashMode) + 1) % mFlashModes.size());
+            }
         }
     }
 

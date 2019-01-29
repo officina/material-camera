@@ -319,7 +319,13 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         Log.d("CameraFragment", "Using resolution: " + maxSize.width + "x" + maxSize.height);
         return maxSize;
     }
-
+    private void setVideoFlashMode(){
+        if (mInterface.getFlashMode() == BaseCaptureActivity.FLASH_MODE_ALWAYS_ON){
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            mCamera.setParameters(parameters);
+        }
+    }
     private void setCameraFocusMode(Camera.Parameters parameters, boolean isVideo){
         if (parameters == null || mCamera == null){
             return;
@@ -403,6 +409,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             Camera.Parameters parameters = mCamera.getParameters();
             setCameraDisplayOrientation(parameters);
             setCameraFocusMode(parameters, true);
+            setupFlashMode();
             mMediaRecorder = new MediaRecorder();
             mCamera.stopPreview();
             mCamera.unlock();
@@ -570,7 +577,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 flashMode = Camera.Parameters.FLASH_MODE_AUTO;
                 break;
             case BaseCaptureActivity.FLASH_MODE_ALWAYS_ON:
-                flashMode = Camera.Parameters.FLASH_MODE_ON;
+                flashMode = mInterface.didRecord() ? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_ON;
                 break;
             case BaseCaptureActivity.FLASH_MODE_OFF:
                 flashMode = Camera.Parameters.FLASH_MODE_OFF;

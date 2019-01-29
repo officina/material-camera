@@ -435,7 +435,9 @@ abstract class BaseCameraFragment extends Fragment
 
         mButtonStillshot.setImageResource(mInterface.iconRecord());
         mInterface.setDidRecord(true);
-
+        if (mInterface.getFlashMode() == BaseCaptureActivity.FLASH_MODE_AUTO){
+            invalidateFlash(true);
+        }
         return true;
     }
 
