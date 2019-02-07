@@ -319,6 +319,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         Log.d("CameraFragment", "Using resolution: " + maxSize.width + "x" + maxSize.height);
         return maxSize;
     }
+
     private void setVideoFlashMode(){
         if (mInterface.getFlashMode() == BaseCaptureActivity.FLASH_MODE_ALWAYS_ON){
             Camera.Parameters parameters = mCamera.getParameters();
@@ -326,17 +327,29 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mCamera.setParameters(parameters);
         }
     }
-    private void setCameraFocusMode(Camera.Parameters parameters, boolean isVideo){
-        if (parameters == null || mCamera == null){
+
+    private void setCameraFocusMode(Camera.Parameters parameters, boolean isVideo) {
+        if (parameters == null || mCamera == null) {
             return;
         }
+
+        // try to set focus mode according acquisition type, if supported
+        final List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+        final String newFocusMode;
+
         if (isVideo) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            newFocusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
         } else {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            newFocusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
         }
+
+        if (supportedFocusModes.contains(newFocusMode)) {
+            parameters.setFocusMode(newFocusMode);
+        }
+
         mCamera.setParameters(parameters);
     }
+
     @SuppressWarnings("WrongConstant")
     private void setCameraDisplayOrientation(Camera.Parameters parameters) {
         Camera.CameraInfo info = new Camera.CameraInfo();
