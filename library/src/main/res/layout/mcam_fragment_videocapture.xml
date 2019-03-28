@@ -50,8 +50,8 @@
         android:layout_width="150dp"
         android:layout_height="4dp"
         android:layout_alignBottom="@+id/navigation"
-        android:layout_marginBottom="21dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="21dp"
         android:max="100"
         android:thumb="@android:color/transparent"/>
 
@@ -169,8 +169,11 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/controlsFrame"
         android:layout_centerHorizontal="true"
-        android:textColor="#00fdc7"
         android:layout_marginBottom="0dp"
-        android:text=""/>
+        android:background="@drawable/mcam_shape_rect_border_top"
+        android:paddingTop="2dp"
+        android:text=""
+        android:textColor="#00fdc7"
+        tools:text="HOLD FOR VIDEO, TAP FOR PHOTO"/>
 
 </RelativeLayout>
