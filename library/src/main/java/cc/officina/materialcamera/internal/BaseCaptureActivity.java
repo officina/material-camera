@@ -28,15 +28,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -48,6 +39,15 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import cc.officina.materialcamera.MaterialCamera;
 import cc.officina.materialcamera.R;
 import cc.officina.materialcamera.TimeLimitReachedException;
@@ -105,18 +105,18 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         if (!CameraUtil.hasCamera(this)) {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.mcam_error)
-                    .content(R.string.mcam_video_capture_unsupported)
-                    .positiveText(android.R.string.ok)
-                    .dismissListener(
+            MaterialDialog dialog = new MaterialDialog(this)
+                    .title(R.string.mcam_error, null)
+                    .message(R.string.mcam_video_capture_unsupported, null, false, 1f)
+                    .positiveButton(android.R.string.ok, null, null);
+            dialog.setOnDismissListener(
                             new DialogInterface.OnDismissListener() {
                                 @Override
                                 public void onDismiss(DialogInterface dialog) {
                                     finish();
                                 }
-                            })
-                    .show();
+                            });
+            dialog.show();
             return;
         }
         setContentView(R.layout.mcam_activity_videocapture);
@@ -416,18 +416,18 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mRequestingPermission = false;
         if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-            new MaterialDialog.Builder(this)
-                    .title(R.string.mcam_permissions_needed)
-                    .content(R.string.mcam_video_perm_warning)
-                    .positiveText(android.R.string.ok)
-                    .dismissListener(
-                            new DialogInterface.OnDismissListener() {
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    finish();
-                                }
-                            })
-                    .show();
+            MaterialDialog dialog = new MaterialDialog(this)
+                    .title(R.string.mcam_permissions_needed, null)
+                    .message(R.string.mcam_video_perm_warning, null, false, 1f)
+                    .positiveButton(android.R.string.ok, null, null);
+            dialog.setOnDismissListener(
+                    new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            finish();
+                        }
+                    });
+            dialog.show();
         } else {
             showInitialRecorder();
         }

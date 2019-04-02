@@ -17,7 +17,7 @@
 package cc.officina.materialcamera;
 
 import android.app.Fragment;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import cc.officina.materialcamera.internal.BaseCaptureActivity;
 import cc.officina.materialcamera.internal.CameraFragment;

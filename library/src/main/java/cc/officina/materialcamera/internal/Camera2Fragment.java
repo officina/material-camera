@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
@@ -49,8 +50,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -61,7 +62,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.io.File;
@@ -1310,18 +1310,18 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Activity activity = getActivity();
-            return new MaterialDialog.Builder(activity)
-                    .content("This device doesn't support the Camera2 API.")
-                    .positiveText(android.R.string.ok)
-                    .onAny(
-                            new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(
-                                        @NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    activity.finish();
-                                }
-                            })
-                    .build();
+            MaterialDialog dialog = new MaterialDialog(activity)
+                    .title(R.string.mcam_permissions_needed, null)
+                    .message(null, "This device doesn't support the Camera2 API.", false, 1f)
+                    .positiveButton(android.R.string.ok, null, null);
+            dialog.setOnDismissListener(
+                    new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            activity.finish();
+                        }
+                    });
+            return dialog;
         }
     }
 }

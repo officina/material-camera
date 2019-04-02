@@ -19,6 +19,7 @@ package cc.officina.materialcamera.internal;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -26,9 +27,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
-import android.support.annotation.Size;
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Size;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -220,11 +221,12 @@ public class VideoStreamView extends SurfaceView
         } catch (Throwable e) {
             Log.d("VideoStreamView", "Failed to setDataSource/prepareAsync: " + e.getMessage());
             e.printStackTrace();
-            new MaterialDialog.Builder(mContext)
-                    .title(R.string.mcam_error)
-                    .content(e.getMessage())
-                    .positiveText(android.R.string.ok)
-                    .show();
+
+            MaterialDialog dialog = new MaterialDialog(mContext)
+                    .title(R.string.mcam_error, null)
+                    .message(null, e.getMessage(), false, 1f)
+                    .positiveButton(android.R.string.ok, null, null);
+            dialog.show();
         }
     }
 

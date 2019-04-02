@@ -18,11 +18,12 @@ package cc.officina.materialcamera.internal;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -194,11 +195,11 @@ public class PlaybackVideoFragment extends Fragment
 
     @Override
     public void onError(EasyVideoPlayer player, Exception e) {
-        new MaterialDialog.Builder(getActivity())
-                .title(R.string.mcam_error)
-                .content(e.getMessage())
-                .positiveText(android.R.string.ok)
-                .show();
+        MaterialDialog dialog = new MaterialDialog(getActivity())
+                .title(R.string.mcam_error, null)
+                .message(null, e.getMessage(), false, 1f)
+                .positiveButton(android.R.string.ok, null, null);
+        dialog.show();
     }
 
     @Override

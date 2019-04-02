@@ -82,10 +82,10 @@ public abstract class BaseGalleryFragment extends Fragment
     }
 
     void showDialog(String title, String errorMsg) {
-        new MaterialDialog.Builder(getActivity())
-                .title(title)
-                .content(errorMsg)
-                .positiveText(android.R.string.ok)
-                .show();
+        MaterialDialog dialog = new MaterialDialog(getActivity())
+                .title(null, title)
+                .message(null, errorMsg, false, 1F)
+                .positiveButton(android.R.string.ok, null, null);
+        dialog.show();
     }
 }
