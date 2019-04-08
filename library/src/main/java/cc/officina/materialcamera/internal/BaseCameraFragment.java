@@ -31,10 +31,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.appcompat.content.res.AppCompatResources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,13 +39,17 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.core.graphics.drawable.DrawableCompat;
 import cc.officina.materialcamera.MaterialCamera;
 import cc.officina.materialcamera.R;
 import cc.officina.materialcamera.util.CameraUtil;
@@ -67,7 +67,7 @@ abstract class BaseCameraFragment extends Fragment
     protected ImageButton mButtonFlash;
     protected ImageButton mButtonPickFromGallery;
     protected ImageButton mButtonNavigation;
-    protected SeekBar mRecordDurationBar;
+    protected AppCompatSeekBar mRecordDurationBar;
     protected TextView mDelayStartCountdown;
     protected TextView mRecordDurationTv;
     protected TextView mRecordButtonTooltip;
@@ -95,7 +95,7 @@ abstract class BaseCameraFragment extends Fragment
                             stopRecordingVideo(true);
                         } else {
                             final long diff = now - mRecordStart;
-                            int percentage = (int)((diff * 100)/mInterface.getLengthLimit());
+                            int percentage = (int) ((diff * 100) / mInterface.getLengthLimit());
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 mRecordDurationBar.setProgress(percentage, true);
                             } else {
@@ -153,12 +153,12 @@ abstract class BaseCameraFragment extends Fragment
 
         mPreviewFrame = (RelativeLayout) view.findViewById(R.id.rootFrame);
 
-        mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
-        mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
-        mRecordDurationTv = (TextView) view.findViewById(R.id.recordDuration);
-        mRecordDurationBar = (SeekBar) view.findViewById(R.id.recordDurationBar);
-        mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
-        mRecordButtonTooltip = (TextView) view.findViewById(R.id.buttonRecordTooltip);
+        mDelayStartCountdown = view.findViewById(R.id.delayStartCountdown);
+        mButtonStillshot = view.findViewById(R.id.stillshot);
+        mRecordDurationTv = view.findViewById(R.id.recordDuration);
+        mRecordDurationBar = view.findViewById(R.id.recordDurationBar);
+        mButtonFacing = view.findViewById(R.id.facing);
+        mRecordButtonTooltip = view.findViewById(R.id.buttonRecordTooltip);
         if (mInterface.shouldHideCameraFacing() || CameraUtil.isChromium()) {
             mButtonFacing.setVisibility(View.GONE);
         } else {
@@ -169,7 +169,7 @@ abstract class BaseCameraFragment extends Fragment
                             : mInterface.iconRearCamera());
         }
 
-        mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
+        mButtonFlash = view.findViewById(R.id.flash);
         setupFlashMode();
 
         mButtonPickFromGallery = view.findViewById(R.id.pick_from_gallery);
@@ -203,16 +203,15 @@ abstract class BaseCameraFragment extends Fragment
             mVideoOutputUri = savedInstanceState.getString("video_output_uri");
         }
         mRecordDurationBar.getProgressDrawable().setColorFilter(Color.parseColor("#00fdc7"), PorterDuff.Mode.SRC_IN);
-        mRecordDurationBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#00fdc7")));
+        //mRecordDurationBar.setProgressTintList(ColorStateList.valueOf(Color.parseColor("#00fdc7")));
         mRecordDurationTv.setVisibility(View.GONE);
         mRecordDurationBar.setVisibility(View.GONE);
-        if (mInterface.allowVideoRecording()){
+        if (mInterface.allowVideoRecording()) {
             mRecordButtonTooltip.setVisibility(View.VISIBLE);
             mRecordButtonTooltip.setText(mInterface.recordTooltipString());
         } else {
             mRecordButtonTooltip.setVisibility(View.GONE);
         }
-
 
         mButtonStillshot.setVisibility(View.VISIBLE);
         mButtonStillshot.setImageResource(mInterface.iconCapture());
@@ -434,7 +433,7 @@ abstract class BaseCameraFragment extends Fragment
 
         mButtonStillshot.setImageResource(mInterface.iconRecord());
         mInterface.setDidRecord(true);
-        if (mInterface.getFlashMode() == BaseCaptureActivity.FLASH_MODE_AUTO){
+        if (mInterface.getFlashMode() == BaseCaptureActivity.FLASH_MODE_AUTO) {
             invalidateFlash(true);
         }
         return true;
@@ -443,7 +442,7 @@ abstract class BaseCameraFragment extends Fragment
     public void stopRecordingVideo(boolean reachedZero) {
         mButtonStillshot.setImageResource(mInterface.iconCapture());
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-        if (mButtonStillshot != null){
+        if (mButtonStillshot != null) {
             mButtonStillshot.setOnTouchListener(null);
         }
     }
@@ -506,7 +505,7 @@ abstract class BaseCameraFragment extends Fragment
                     @Override
                     public void run() {
                         mRecordDurationTv.setVisibility(View.VISIBLE);
-                        mRecordDurationTv.setText(String.format("%d\"", mInterface.getLengthLimit()/1000));
+                        mRecordDurationTv.setText(String.format("%d\"", mInterface.getLengthLimit() / 1000));
                         mRecordDurationBar.setVisibility(View.VISIBLE);
                         mRecordButtonTooltip.setVisibility(View.GONE);
                         mIsRecording = startRecordingVideo();

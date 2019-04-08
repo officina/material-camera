@@ -45,7 +45,7 @@
         android:textColor="#00fdc7"
         android:textSize="17dp"/>
 
-    <SeekBar
+    <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/recordDurationBar"
         android:layout_width="150dp"
         android:layout_height="4dp"

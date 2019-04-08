@@ -49,7 +49,7 @@
         android:textColor="#00fdc7"
         android:textSize="@dimen/mcam_regular_content_fontsize"/>
 
-    <SeekBar
+    <androidx.appcompat.widget.AppCompatSeekBar
         android:id="@+id/recordDurationBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
