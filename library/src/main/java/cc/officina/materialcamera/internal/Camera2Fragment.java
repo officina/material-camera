@@ -1312,8 +1312,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             final Activity activity = getActivity();
             MaterialDialog dialog = new MaterialDialog(activity)
                     .title(R.string.mcam_permissions_needed, null)
-                    .message(null, "This device doesn't support the Camera2 API.", false, 1f)
-                    .positiveButton(android.R.string.ok, null, null);
+                    .message(null, "This device doesn't support the Camera2 API.", false, 1f);
             dialog.setOnDismissListener(
                     new DialogInterface.OnDismissListener() {
                         @Override

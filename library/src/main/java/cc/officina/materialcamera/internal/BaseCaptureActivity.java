@@ -107,8 +107,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         if (!CameraUtil.hasCamera(this)) {
             MaterialDialog dialog = new MaterialDialog(this)
                     .title(R.string.mcam_error, null)
-                    .message(R.string.mcam_video_capture_unsupported, null, false, 1f)
-                    .positiveButton(android.R.string.ok, null, null);
+                    .message(R.string.mcam_video_capture_unsupported, null, false, 1f);
             dialog.setOnDismissListener(
                             new DialogInterface.OnDismissListener() {
                                 @Override
@@ -418,8 +417,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity
         if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
             MaterialDialog dialog = new MaterialDialog(this)
                     .title(R.string.mcam_permissions_needed, null)
-                    .message(R.string.mcam_video_perm_warning, null, false, 1f)
-                    .positiveButton(android.R.string.ok, null, null);
+                    .message(R.string.mcam_video_perm_warning, null, false, 1f);
             dialog.setOnDismissListener(
                     new DialogInterface.OnDismissListener() {
                         @Override

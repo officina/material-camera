@@ -224,8 +224,7 @@ public class VideoStreamView extends SurfaceView
 
             MaterialDialog dialog = new MaterialDialog(mContext)
                     .title(R.string.mcam_error, null)
-                    .message(null, e.getMessage(), false, 1f)
-                    .positiveButton(android.R.string.ok, null, null);
+                    .message(null, e.getMessage(), false, 1f);
             dialog.show();
         }
     }

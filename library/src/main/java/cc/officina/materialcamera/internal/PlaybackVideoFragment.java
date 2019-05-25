@@ -197,8 +197,7 @@ public class PlaybackVideoFragment extends Fragment
     public void onError(EasyVideoPlayer player, Exception e) {
         MaterialDialog dialog = new MaterialDialog(getActivity())
                 .title(R.string.mcam_error, null)
-                .message(null, e.getMessage(), false, 1f)
-                .positiveButton(android.R.string.ok, null, null);
+                .message(null, e.getMessage(), false, 1f);
         dialog.show();
     }
 
